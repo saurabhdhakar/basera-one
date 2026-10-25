@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { ArrowLeft, ArrowRight, Crosshair, Home, LoaderCircle, MapPin, Search, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Crosshair, LoaderCircle, MapPin, Search, X } from 'lucide-react';
 import mapArt from '@/assets/location-map.png';
+import baseraMark from '@/assets/basera-mark.png';
 import { Button } from '@/components/ui/button';
 import { autocompleteLocations, resolveLocation } from '@/lib/ola-location.functions';
 import { useLocationState } from './LocationState';
@@ -85,7 +86,7 @@ export function LocationSelection({ onDone, onSelect, inline = false, onboarding
     <div className="loc-blob loc-blob-top" aria-hidden="true" />
     <div className="loc-blob loc-blob-bottom" aria-hidden="true" />
     <header className="loc-brand">
-      <span className="loc-brand-icon" aria-hidden="true"><Home /></span>
+      <img className="loc-brand-icon" src={baseraMark} alt="" width={94} height={92} />
       <span><strong>Basera</strong><small>Find Your Perfect Stay</small></span>
     </header>
     <section className="loc-onboard-panel">
