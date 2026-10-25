@@ -16,7 +16,7 @@ describe('Ola location selection', () => {
     render(<LocationProvider><LocationSelection onboarding onDone={vi.fn()} /></LocationProvider>);
     expect(screen.getByRole('heading', { name: 'Where is your location?' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /close/i })).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Other location' }));
+    fireEvent.click(screen.getByRole('button', { name: /other location/i }));
     expect(screen.queryByRole('button', { name: /close/i })).toBeNull();
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });

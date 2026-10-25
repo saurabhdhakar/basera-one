@@ -1878,14 +1878,25 @@ function hashCode(str){
   return h;
 }
 
+var listingsUnsub = null;
+var listingsCity = null;
+// Fetch only the selected city's listings from Firestore (equality on one field needs no
+// composite index). Locality narrowing + city fallback happens in getListings().
 function listenApprovedListings(){
+  if(typeof fbDb === 'undefined' || !fbDb) return;
+  var city = (state.city && state.city !== 'All India') ? state.city : '';
+  if(listingsUnsub && listingsCity === city) return;
+  if(listingsUnsub){ listingsUnsub(); listingsUnsub = null; }
+  listingsCity = city;
   listingsLoading = true;
   listingsError = null;
   render();
-  fbDb.collection('listings')
-    .where('status', 'in', ['active','approved'])
-    .onSnapshot(function(snap){
-      ALL = snap.docs.map(docToListing);
+  var query = city
+    ? fbDb.collection('listings').where('city', '==', city)
+    : fbDb.collection('listings').where('status', 'in', ['active','approved']);
+  listingsUnsub = query.onSnapshot(function(snap){
+      if(listingsCity !== city) return;
+      ALL = snap.docs.map(docToListing).filter(function(l){ return l.status === 'active' || l.status === 'approved'; });
       listingsLoading = false;
       listingsError = null;
       render();
@@ -2353,6 +2364,7 @@ function selectCity(c){
   state.location = null;
   document.getElementById('locLabel').textContent = c;
   closeModal('locModal');
+  listenApprovedListings();
   render();
   showToast(t('toast_loc_set')+c);
 }
@@ -2372,6 +2384,7 @@ document.addEventListener('basera-location-selected', function(event){
   CITY_COORDS[state.city] = [location.latitude, location.longitude];
   document.getElementById('locLabel').textContent = location.shortLabel || location.address;
   closeModal('locModal');
+  listenApprovedListings();
   render();
 });
 
