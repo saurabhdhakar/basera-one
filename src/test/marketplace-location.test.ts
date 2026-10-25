@@ -40,7 +40,7 @@ function selectLocation(detail: Record<string, unknown>) {
 
 function cardTitles(): string[] {
   const grid = dom.window.document.getElementById('grid')!;
-  return Array.from(grid.querySelectorAll('.card .title')).map((el) => el.textContent?.trim() ?? '');
+  return Array.from(grid.querySelectorAll<Element>('.card .title')).map((el) => el.textContent?.trim() ?? '');
 }
 
 function countText(): string {
