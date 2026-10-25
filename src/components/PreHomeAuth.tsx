@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authenticationError, emailSchema, loginWithGoogle, resetEmailPassword, submitEmailAccount } from "@/lib/firebase-auth";
-import splashLogo from "@/assets/branding/basera-splash-logo.png.asset.json";
+import splashLogoSrc from "@/assets/branding/android-foreground-master.png";
+const splashLogo = { url: splashLogoSrc };
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import "./PreHomeAuth.css";
 
