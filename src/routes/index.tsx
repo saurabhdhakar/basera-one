@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [stage, setStage] = useState<AppStage>("checking");
+  const { location } = useLocationState();
   const openingTimer = useRef<number | null>(null);
 
   const enterHome = useCallback(() => {
@@ -90,8 +91,8 @@ function Index() {
     );
   }
 
-  if (stage === "location") {
-    return <LocationSelection onDone={enterHome} />;
+  if (stage === "location" || (stage === "home" && !location)) {
+    return <LocationSelection onboarding onDone={enterHome} />;
   }
 
   if (stage !== "home") {
