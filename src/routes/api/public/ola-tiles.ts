@@ -1,16 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { rewriteTileResources, validTilePath } from '@/lib/ola-tiles';
+import { OLA_BASE, olaKey } from '@/lib/ola-location.server';
 
 export const Route = createFileRoute('/api/public/ola-tiles')({
   server: { handlers: { GET: async ({ request }) => {
     const path = new URL(request.url).searchParams.get('path') || '';
     if (!validTilePath(path)) return new Response('Invalid map resource', { status: 400 });
-    const gatewayKey = process.env['LOVABLE_API_KEY'];
-    const connectionKey = process.env['UDC_OLA_MAPS_API_KEY'];
-    if (!gatewayKey || !connectionKey) return new Response('Map unavailable', { status: 503 });
+    const key = olaKey();
+    if (!key) return new Response('Map unavailable', { status: 503 });
     try {
-      const upstream = await fetch(`https://connector-gateway.lovable.dev/udc_ola_maps${path}`, {
-        headers: { Authorization: `Bearer ${gatewayKey}`, 'X-Connection-Api-Key': connectionKey },
+      const target = new URL(path, OLA_BASE);
+      target.searchParams.set('api_key', key);
+      const upstream = await fetch(target, {
         signal: AbortSignal.timeout(15000),
       });
       if (!upstream.ok) return new Response('Map unavailable', { status: 502 });
