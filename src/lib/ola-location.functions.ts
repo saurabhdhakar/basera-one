@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
-import { requestOla } from './ola-location.server';
+import { requestOla, olaKey } from './ola-location.server';
 import { normalizeOlaPlace, pickBestGpsPlace, type LocationSuggestion, type SelectedLocation } from './ola-location';
 
 type Result<T> = { data: T; error: string | null };
@@ -9,7 +9,7 @@ const unavailable = 'Location search is unavailable. Please try again.';
 export const autocompleteLocations = createServerFn({ method: 'POST' })
   .inputValidator((input: unknown) => z.object({ query: z.string().trim().min(2).max(120) }).parse(input))
   .handler(async ({ data }): Promise<Result<LocationSuggestion[]>> => {
-    const key = process.env['UDC_OLA_MAPS_API_KEY'];
+    const key = olaKey();
     if (!key) return { data: [], error: unavailable };
     try {
       const result = await requestOla('autocomplete', { input: data.query }, key) as { predictions?: { place_id?: string; description?: string; structured_formatting?: { main_text?: string; secondary_text?: string } }[]; status?: string };
@@ -24,7 +24,7 @@ export const resolveLocation = createServerFn({ method: 'POST' })
     z.object({ kind: z.literal('gps'), latitude: z.number().finite().min(-90).max(90), longitude: z.number().finite().min(-180).max(180) }),
   ]).parse(input))
   .handler(async ({ data }): Promise<Result<SelectedLocation | null>> => {
-    const key = process.env['UDC_OLA_MAPS_API_KEY'];
+    const key = olaKey();
     if (!key) return { data: null, error: unavailable };
     try {
       const result = data.kind === 'place'
