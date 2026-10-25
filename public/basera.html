@@ -1919,17 +1919,91 @@ function listenMyListings(){
     }, function(err){ console.error('Firestore my-listings listener failed:', err); });
 }
 
-// Uploads File objects to Firebase Storage under listings/{uid}/{timestamp}_{name}
-// and resolves to an array of download URLs, in the same order as the input files.
+// ---- Client-side image compression: WebP, max 1400px side, quality 0.82 ----
+var PHOTO_MAX_SIDE = 1400, PHOTO_QUALITY = 0.82;
+function loadImageForCompress(file){
+  if(window.createImageBitmap){
+    return createImageBitmap(file, { imageOrientation: 'from-image' }).catch(function(){ return loadViaImg(file); });
+  }
+  return loadViaImg(file);
+  function loadViaImg(f){
+    return new Promise(function(res, rej){
+      var url = URL.createObjectURL(f), img = new Image();
+      img.onload = function(){ URL.revokeObjectURL(url); res(img); };
+      img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error('Could not read image')); };
+      img.src = url;
+    });
+  }
+}
+function compressImageToWebp(file){
+  return loadImageForCompress(file).then(function(img){
+    var w = img.width, h = img.height, scale = Math.min(1, PHOTO_MAX_SIDE / Math.max(w, h));
+    var cw = Math.round(w * scale), ch = Math.round(h * scale);
+    var canvas = document.createElement('canvas');
+    canvas.width = cw; canvas.height = ch;
+    var ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, cw, ch);
+    if(img.close) img.close();
+    return new Promise(function(res, rej){
+      canvas.toBlob(function(blob){
+        if(!blob) return rej(new Error('Compression failed'));
+        if(blob.type !== 'image/webp') return rej(new Error('This browser cannot create WebP images'));
+        res(blob);
+      }, 'image/webp', PHOTO_QUALITY);
+    });
+  });
+}
+
+// Upload progress overlay
+function showUploadProgress(text, pct){
+  var el = document.getElementById('uploadProgressOverlay');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'uploadProgressOverlay';
+    el.setAttribute('role','status'); el.setAttribute('aria-live','polite');
+    el.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(10,39,96,.45);backdrop-filter:blur(2px)';
+    el.innerHTML = '<div style="background:#fff;border-radius:16px;padding:22px 26px;width:260px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.2);font-family:inherit">'+
+      '<div style="width:38px;height:38px;margin:0 auto 12px;border:3px solid #e2effd;border-top-color:#2978e4;border-radius:50%;animation:upSpin .8s linear infinite"></div>'+
+      '<div id="uploadProgressText" style="font-size:14px;font-weight:600;color:#0a2760;margin-bottom:10px"></div>'+
+      '<div style="height:6px;background:#e2effd;border-radius:6px;overflow:hidden"><div id="uploadProgressBar" style="height:100%;width:0;background:#2978e4;transition:width .25s ease"></div></div>'+
+      '</div><style>@keyframes upSpin{to{transform:rotate(360deg)}}</style>';
+    document.body.appendChild(el);
+  }
+  el.style.display = 'flex';
+  document.getElementById('uploadProgressText').textContent = text;
+  document.getElementById('uploadProgressBar').style.width = Math.max(0, Math.min(100, pct)) + '%';
+}
+function hideUploadProgress(){
+  var el = document.getElementById('uploadProgressOverlay');
+  if(el) el.style.display = 'none';
+}
+
+// Compresses each File to WebP, uploads to Firebase Storage under
+// listings/{uid}/{timestamp}_{i}_{name}.webp and resolves to download URLs in input order.
 function uploadPhotosToStorage(files, uid){
   if(!files.length) return Promise.resolve([]);
-  var refs = files.map(function(file){
-    var path = 'listings/' + uid + '/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
-    return fbStorage.ref(path);
-  });
-  return Promise.all(refs.map(function(ref, i){
-    return ref.put(files[i]).then(function(){ return ref.getDownloadURL(); });
-  }));
+  var total = files.length, compressed = 0, uploadFrac = files.map(function(){ return 0; });
+  function update(){
+    var up = uploadFrac.reduce(function(a,b){ return a+b; }, 0);
+    var pct = (compressed / total) * 30 + (up / total) * 70;
+    showUploadProgress(compressed < total ? 'Optimizing photos… ('+compressed+'/'+total+')' : 'Uploading photos… '+Math.round(pct)+'%', pct);
+  }
+  update();
+  var stamp = Date.now();
+  return Promise.all(files.map(function(file, i){
+    return compressImageToWebp(file).then(function(blob){
+      compressed++; update();
+      var base = file.name.replace(/\.[^.]+$/, '').replace(/[^a-zA-Z0-9._-]/g,'_') || 'photo';
+      var ref = fbStorage.ref('listings/' + uid + '/' + stamp + '_' + i + '_' + base + '.webp');
+      return new Promise(function(res, rej){
+        var task = ref.put(blob, { contentType: 'image/webp', cacheControl: 'public,max-age=31536000' });
+        task.on('state_changed', function(s){
+          uploadFrac[i] = s.totalBytes ? s.bytesTransferred / s.totalBytes : 0; update();
+        }, rej, function(){ uploadFrac[i] = 1; update(); ref.getDownloadURL().then(res, rej); });
+      });
+    });
+  })).then(function(urls){ hideUploadProgress(); return urls; }, function(err){ hideUploadProgress(); throw err; });
 }
 
 // Creates a new Firestore listing document. Status is always "pending" here —
