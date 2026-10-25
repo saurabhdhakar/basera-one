@@ -745,7 +745,7 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
     </div>
     <button class="loc-btn" id="locBtn">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21z" stroke="#FF9F1C" stroke-width="2"/><circle cx="12" cy="9.5" r="2.4" fill="#FF9F1C"/></svg>
-      <span id="locLabel">Select location</span>
+      <span id="locLabel"></span>
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
     </button>
   </div>
@@ -2410,10 +2410,7 @@ document.getElementById('citySearch').addEventListener('input', function(e){
 });
 
 document.getElementById('allIndiaBtn').addEventListener('click', function(){
-  state.city = 'All India';
-  state.location = null;
-  document.getElementById('locLabel').textContent = 'Select location';
-  closeModal('locModal'); render();
+  closeModal('locModal');
 });
 
 function haversine(lat1,lon1,lat2,lon2){

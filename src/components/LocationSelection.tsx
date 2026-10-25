@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { Crosshair, LoaderCircle, MapPin, Search, X } from 'lucide-react';
+import { ArrowLeft, Crosshair, LoaderCircle, MapPin, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { autocompleteLocations, resolveLocation } from '@/lib/ola-location.functions';
 import { useLocationState } from './LocationState';
@@ -8,10 +8,11 @@ import type { LocationSuggestion, SelectedLocation } from '@/lib/ola-location';
 import './PreHomeAuth.css';
 import './LocationSelection.css';
 
-export function LocationSelection({ onDone, onSelect, inline = false }: { onDone: () => void; onSelect?: (location: SelectedLocation | null) => void; inline?: boolean }) {
+export function LocationSelection({ onDone, onSelect, inline = false, onboarding = false }: { onDone: () => void; onSelect?: (location: SelectedLocation | null) => void; inline?: boolean; onboarding?: boolean }) {
   const { location, select } = useLocationState();
   const autocomplete = useServerFn(autocompleteLocations);
   const resolve = useServerFn(resolveLocation);
+  const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [busy, setBusy] = useState<'search' | 'gps' | 'place' | null>(null);
@@ -22,7 +23,8 @@ export function LocationSelection({ onDone, onSelect, inline = false }: { onDone
   const version = useRef(0);
   const alive = useRef(true);
   const input = useRef<HTMLInputElement>(null);
-  useEffect(() => { alive.current = true; input.current?.focus(); return () => { alive.current = false; version.current++; }; }, []);
+  useEffect(() => { alive.current = true; return () => { alive.current = false; version.current++; }; }, []);
+  useEffect(() => { input.current?.focus(); }, [searching]);
   useEffect(() => {
     if (chosen && query === chosen.shortLabel) return;
     if (query.trim().length < 2) { setSuggestions([]); setSearched(false); return; }
@@ -78,9 +80,24 @@ export function LocationSelection({ onDone, onSelect, inline = false }: { onDone
     version.current++; setQuery(value); setChosen(null); setSuggestions([]); setActive(-1); setSearched(false); setBusy(null); setError('');
   };
   const resolving = busy === 'gps' || busy === 'place';
+  if (onboarding && !searching) return <main className="prehome-auth loc-onboard" aria-label="Choose your location">
+    <section className="loc-onboard-panel">
+      <div className="loc-onboard-pin" aria-hidden="true"><MapPin /></div>
+      <h1>Where is your location?</h1>
+      <p>Enjoy a personalized selling and buying experience by telling us your location.</p>
+      {error && <p className="ola-error" role="alert">{error}</p>}
+      {busy === 'place' && <p className="ola-status" role="status">Fetching address…</p>}
+      <Button className="loc-onboard-find" disabled={resolving} onClick={detect}>
+        {busy === 'gps' ? <LoaderCircle className="animate-spin" /> : <Crosshair />} {busy === 'gps' ? 'Detecting…' : 'Find My Location'}
+      </Button>
+      <Button variant="link" className="loc-onboard-other" disabled={resolving} onClick={() => { setError(''); setSearching(true); }}>Other location</Button>
+    </section>
+  </main>;
   return <main className={inline ? 'room-location ola-screen' : 'prehome-auth loc-screen ola-screen'} aria-label="Select your location">
     <section className="loc-panel">
-      {!inline && <header className="loc-header"><Button variant="ghost" size="icon" className="loc-icon" aria-label="Close location selector" onClick={onDone}><X /></Button><h1>Location</h1></header>}
+      {!inline && <header className="loc-header">{onboarding
+        ? <Button variant="ghost" size="icon" className="loc-icon" aria-label="Back" onClick={() => setSearching(false)}><ArrowLeft /></Button>
+        : <Button variant="ghost" size="icon" className="loc-icon" aria-label="Close location selector" onClick={onDone}><X /></Button>}<h1>Location</h1></header>}
       <div className="ola-search">
         <Search size={22} aria-hidden="true" />
         <input ref={input} role="combobox" aria-label="Search city, area or neighbourhood" aria-autocomplete="list" aria-controls="ola-suggestions" aria-expanded={suggestions.length > 0} aria-activedescendant={active >= 0 ? `ola-option-${active}` : undefined} placeholder="Search city, area or neighbourhood" maxLength={120} value={query || (chosen?.shortLabel ?? '')} disabled={resolving} onChange={e => edit(e.target.value)} onKeyDown={e => {

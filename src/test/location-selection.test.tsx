@@ -12,6 +12,14 @@ const selected = { address: 'Bhopal, Madhya Pradesh, India', locality: '', city:
 const show = (onDone = vi.fn()) => render(<LocationProvider><LocationSelection onDone={onDone} /></LocationProvider>);
 
 describe('Ola location selection', () => {
+  it('onboarding cannot be closed without choosing a location', () => {
+    render(<LocationProvider><LocationSelection onboarding onDone={vi.fn()} /></LocationProvider>);
+    expect(screen.getByRole('heading', { name: 'Where is your location?' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /close/i })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Other location' }));
+    expect(screen.queryByRole('button', { name: /close/i })).toBeNull();
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
+  });
   it('keeps room selections separate from the browsing location and clears edited coordinates', async () => {
     window.sessionStorage.setItem('basera:selected-location', JSON.stringify({ ...selected, city: 'Delhi' }));
     mocks.autocomplete.mockResolvedValue({ data: [{ placeId: 'bhopal', address: selected.address, title: 'Bhopal', subtitle: '' }], error: null });

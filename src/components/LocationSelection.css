@@ -23,3 +23,14 @@
 .ola-selected > svg { flex-shrink: 0; color: var(--color-brand-green); }
 .ola-selected span { flex: 1; }
 .ola-confirm { flex-shrink: 0; }
+.loc-onboard { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 32px 24px; font-family: Arial, sans-serif; }
+.loc-onboard-panel { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+.loc-onboard-pin { width: 112px; height: 112px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in oklab, var(--auth-link) 14%, transparent); color: var(--auth-link); margin-bottom: 12px; }
+.loc-onboard-pin svg { width: 56px; height: 56px; }
+.loc-onboard h1 { font-size: 24px; font-weight: 700; color: var(--color-foreground); }
+.loc-onboard p { font-size: 15px; line-height: 1.5; color: var(--color-muted-foreground); margin-bottom: 16px; }
+.loc-onboard .ola-error, .loc-onboard .ola-status { margin: 0; }
+.loc-onboard-find { width: 100%; height: 52px; font-size: 16px; font-weight: 600; background: var(--auth-link); color: var(--color-background); border-radius: 8px; }
+.loc-onboard-find:hover { background: color-mix(in oklab, var(--auth-link) 88%, black); }
+.loc-onboard-find svg { width: 22px; height: 22px; }
+.loc-onboard-other { color: var(--auth-link); font-size: 15px; font-weight: 600; }

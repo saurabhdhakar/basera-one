@@ -71,8 +71,8 @@ beforeAll(() => {
 });
 
 describe('marketplace location badge and feed filtering', () => {
-  it('starts at All India with a dropdown arrow in the badge', () => {
-    expect(dom.window.document.getElementById('locLabel')!.textContent).toBe('All India');
+  it('never shows All India or a placeholder in the badge', () => {
+    expect(dom.window.document.getElementById('locLabel')!.textContent).toBe('');
     // arrow icon inside the badge, next to the label
     const arrow = dom.window.document.querySelector('#locBtn svg path[d^="M6 9l6 6"]');
     expect(arrow).not.toBeNull();
@@ -101,12 +101,11 @@ describe('marketplace location badge and feed filtering', () => {
     expect(hook.state.city).toBe(before);
   });
 
-  it('resetting to All India shows everything again and clears the badge', () => {
+  it('the All India button keeps the selected location in the badge', () => {
     dom.window.document.getElementById('locBtn')!.click();
     dom.window.document.getElementById('allIndiaBtn')!.click();
 
-    expect(dom.window.document.getElementById('locLabel')!.textContent).toBe('All India');
-    expect(cardTitles().sort()).toEqual(['Bhopal flat', 'Bilawali room', 'Vijay Nagar room']);
+    expect(dom.window.document.getElementById('locLabel')!.textContent).toBe('Nipania, Indore');
   });
 
   it('picking a city from the browse list filters by that city and clears the locality', () => {
