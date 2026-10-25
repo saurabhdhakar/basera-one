@@ -23,14 +23,25 @@
 .ola-selected > svg { flex-shrink: 0; color: var(--color-brand-green); }
 .ola-selected span { flex: 1; }
 .ola-confirm { flex-shrink: 0; }
-.loc-onboard { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 32px 24px; font-family: Arial, sans-serif; }
-.loc-onboard-panel { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; }
-.loc-onboard-pin { width: 112px; height: 112px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in oklab, var(--auth-link) 14%, transparent); color: var(--auth-link); margin-bottom: 12px; }
-.loc-onboard-pin svg { width: 56px; height: 56px; }
-.loc-onboard h1 { font-size: 24px; font-weight: 700; color: var(--color-foreground); }
-.loc-onboard p { font-size: 15px; line-height: 1.5; color: var(--color-muted-foreground); margin-bottom: 16px; }
+.loc-onboard { --loc-blue: oklch(0.56 0.19 258); --loc-navy: oklch(0.27 0.09 262); position: relative; overflow: hidden; min-height: 100svh; display: flex; flex-direction: column; padding: 28px 24px 32px; font-family: Arial, sans-serif; background: oklch(0.985 0.006 250); }
+.loc-blob { position: absolute; border-radius: 50%; background: color-mix(in oklab, var(--loc-blue) 10%, transparent); pointer-events: none; }
+.loc-blob-top { width: 200px; height: 200px; top: -80px; right: -70px; }
+.loc-blob-bottom { width: 220px; height: 220px; bottom: -110px; left: -100px; }
+.loc-brand { position: relative; display: flex; align-items: center; gap: 12px; }
+.loc-brand-icon { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; background: var(--loc-blue); color: var(--color-background); }
+.loc-brand-icon svg { width: 26px; height: 26px; }
+.loc-brand strong { display: block; font-size: 28px; line-height: 1; font-weight: 800; color: var(--loc-navy); letter-spacing: -0.5px; }
+.loc-brand small { display: block; margin-top: 4px; font-size: 13px; color: var(--color-muted-foreground); }
+.loc-onboard-panel { position: relative; flex: 1; width: 100%; max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 14px; }
+.loc-onboard-art { width: 100%; max-width: 340px; border-radius: 50%; background: radial-gradient(circle, color-mix(in oklab, var(--loc-blue) 9%, transparent) 55%, transparent 72%); }
+.loc-onboard-art img { width: 100%; height: auto; display: block; }
+.loc-onboard h1 { font-size: 32px; line-height: 1.12; font-weight: 800; color: var(--loc-navy); letter-spacing: -0.5px; max-width: 280px; }
+.loc-onboard p { font-size: 15px; line-height: 1.55; color: var(--color-muted-foreground); max-width: 300px; margin-bottom: 10px; }
 .loc-onboard .ola-error, .loc-onboard .ola-status { margin: 0; }
-.loc-onboard-find { width: 100%; height: 52px; font-size: 16px; font-weight: 600; background: var(--auth-link); color: var(--color-background); border-radius: 8px; }
-.loc-onboard-find:hover { background: color-mix(in oklab, var(--auth-link) 88%, black); }
+.loc-onboard-find { width: 100%; height: 56px; padding: 0 24px; font-size: 17px; font-weight: 600; background: var(--loc-blue); color: var(--color-background); border-radius: 999px; display: flex; align-items: center; gap: 14px; box-shadow: 0 10px 24px -10px color-mix(in oklab, var(--loc-blue) 70%, transparent); }
+.loc-onboard-find:hover { background: color-mix(in oklab, var(--loc-blue) 88%, black); }
 .loc-onboard-find svg { width: 22px; height: 22px; }
-.loc-onboard-other { color: var(--auth-link); font-size: 15px; font-weight: 600; }
+.loc-find-divider { width: 1px; height: 24px; background: color-mix(in oklab, var(--color-background) 45%, transparent); }
+.loc-find-label { flex: 1; text-align: left; }
+.loc-onboard-other { color: var(--loc-blue); font-size: 15px; font-weight: 600; gap: 8px; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
+.loc-onboard-other svg { width: 18px; height: 18px; }
