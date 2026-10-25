@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { ArrowLeft, Crosshair, LoaderCircle, MapPin, Search, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Crosshair, Home, LoaderCircle, MapPin, Search, X } from 'lucide-react';
+import mapArt from '@/assets/location-map.png';
 import { Button } from '@/components/ui/button';
 import { autocompleteLocations, resolveLocation } from '@/lib/ola-location.functions';
 import { useLocationState } from './LocationState';
@@ -81,16 +82,25 @@ export function LocationSelection({ onDone, onSelect, inline = false, onboarding
   };
   const resolving = busy === 'gps' || busy === 'place';
   if (onboarding && !searching) return <main className="prehome-auth loc-onboard" aria-label="Choose your location">
+    <div className="loc-blob loc-blob-top" aria-hidden="true" />
+    <div className="loc-blob loc-blob-bottom" aria-hidden="true" />
+    <header className="loc-brand">
+      <span className="loc-brand-icon" aria-hidden="true"><Home /></span>
+      <span><strong>Basera</strong><small>Find Your Perfect Stay</small></span>
+    </header>
     <section className="loc-onboard-panel">
-      <div className="loc-onboard-pin" aria-hidden="true"><MapPin /></div>
+      <div className="loc-onboard-art"><img src={mapArt} alt="" width={1024} height={768} /></div>
       <h1>Where is your location?</h1>
-      <p>Enjoy a personalized selling and buying experience by telling us your location.</p>
+      <p>Enjoy a personalized experience and find the best rentals near you by telling us your location.</p>
       {error && <p className="ola-error" role="alert">{error}</p>}
       {busy === 'place' && <p className="ola-status" role="status">Fetching address…</p>}
       <Button className="loc-onboard-find" disabled={resolving} onClick={detect}>
-        {busy === 'gps' ? <LoaderCircle className="animate-spin" /> : <Crosshair />} {busy === 'gps' ? 'Detecting…' : 'Find My Location'}
+        {busy === 'gps' ? <LoaderCircle className="animate-spin" /> : <MapPin />}
+        <span className="loc-find-divider" aria-hidden="true" />
+        <span className="loc-find-label">{busy === 'gps' ? 'Detecting…' : 'Find My Location'}</span>
+        <ArrowRight />
       </Button>
-      <Button variant="link" className="loc-onboard-other" disabled={resolving} onClick={() => { setError(''); setSearching(true); }}>Other location</Button>
+      <Button variant="link" className="loc-onboard-other" disabled={resolving} onClick={() => { setError(''); setSearching(true); }}><MapPin /> Other Location</Button>
     </section>
   </main>;
   return <main className={inline ? 'room-location ola-screen' : 'prehome-auth loc-screen ola-screen'} aria-label="Select your location">
