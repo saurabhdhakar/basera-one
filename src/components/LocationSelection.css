@@ -25,8 +25,8 @@
 .ola-confirm { flex-shrink: 0; }
 .loc-onboard { --loc-blue: #2978e4; --loc-navy: #0a2760; --loc-muted: #5f6b85; --loc-sky: #e2effd; position: relative; overflow: hidden; min-height: 100svh; display: flex; flex-direction: column; padding: 24px 24px 36px; font-family: 'Poppins', Arial, sans-serif; background: #f6fafe; }
 .loc-blob { position: absolute; border-radius: 50%; background: var(--loc-sky); pointer-events: none; }
-.loc-blob-top { width: 250px; height: 250px; top: -105px; right: -95px; }
-.loc-blob-bottom { width: 270px; height: 270px; bottom: -125px; left: -115px; }
+.loc-blob-top { width: 215px; height: 215px; top: -90px; right: -85px; }
+.loc-blob-bottom { width: 235px; height: 235px; bottom: -110px; left: -100px; }
 .loc-brand { position: relative; display: flex; align-items: center; gap: 12px; }
 .loc-brand-icon { width: 38px; height: auto; display: block; }
 .loc-brand strong { display: block; font-size: 22px; line-height: 1.1; font-weight: 700; color: var(--loc-navy); letter-spacing: -0.2px; }
@@ -35,7 +35,7 @@
 .loc-onboard-art { width: 100%; max-width: 262px; }
 .loc-onboard-art img { width: 100%; height: auto; display: block; }
 .loc-onboard h1 { font-size: 30px; line-height: 1.08; font-weight: 700; color: var(--loc-navy); letter-spacing: -0.3px; max-width: 215px; margin-top: 6px; }
-.loc-onboard p { font-size: 13.5px; line-height: 1.4; color: var(--loc-muted); max-width: 215px; margin-bottom: 14px; }
+.loc-onboard p { font-size: 13.5px; line-height: 1.45; color: var(--loc-muted); max-width: 232px; margin-bottom: 14px; }
 .loc-onboard .ola-error, .loc-onboard .ola-status { margin: 0; max-width: 280px; }
 .loc-onboard-find { width: 88%; max-width: 300px; height: 48px; padding: 0 24px; font-size: 15px; font-weight: 600; background: var(--loc-blue); color: #ffffff; border-radius: 999px; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 12px 26px -10px rgb(41 120 228 / 0.55); }
 .loc-onboard-find:hover { background: color-mix(in oklab, var(--loc-blue) 88%, black); }
