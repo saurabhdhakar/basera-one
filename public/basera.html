@@ -2364,6 +2364,7 @@ function selectCity(c){
   state.location = null;
   document.getElementById('locLabel').textContent = c;
   closeModal('locModal');
+  listenApprovedListings();
   render();
   showToast(t('toast_loc_set')+c);
 }
@@ -2383,6 +2384,7 @@ document.addEventListener('basera-location-selected', function(event){
   CITY_COORDS[state.city] = [location.latitude, location.longitude];
   document.getElementById('locLabel').textContent = location.shortLabel || location.address;
   closeModal('locModal');
+  listenApprovedListings();
   render();
 });
 
