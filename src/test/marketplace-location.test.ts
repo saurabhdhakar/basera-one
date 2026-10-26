@@ -74,7 +74,7 @@ describe('marketplace location badge and feed filtering', () => {
   it('never shows All India or a placeholder in the badge', () => {
     expect(dom.window.document.getElementById('locLabel')!.textContent).toBe('');
     // arrow icon inside the badge, next to the label
-    const arrow = dom.window.document.querySelector('#locBtn svg path[d^="M6 9l6 6"]');
+    const arrow = dom.window.document.querySelector('#locBtn svg path[d^="M6 9.5l6 6"]');
     expect(arrow).not.toBeNull();
   });
 
