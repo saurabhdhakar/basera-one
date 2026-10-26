@@ -80,13 +80,16 @@ header.top{
 .brand{font-weight:800; font-size:20px; letter-spacing:-0.02em; color:#fff; display:flex; align-items:center; gap:8px;}
 .brand-logo{width:30px; height:30px; border-radius:8px; flex:0 0 auto; object-fit:cover;}
 .brand svg{flex:0 0 auto;}
-.brand small{font-family:'Inter'; font-weight:500; font-size:10.5px; color:var(--marigold); display:block; letter-spacing:.02em;}
+.brand small{font-family:'Inter'; font-weight:500; font-size:10.5px; color:var(--marigold); display:none; letter-spacing:.02em;}
 .loc-btn{
-  margin-left:auto; display:flex; align-items:center; gap:5px;
-  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18);
-  padding:7px 10px; border-radius:20px; color:#fff; font-size:13px; max-width:150px;
+  margin-left:auto; display:flex; align-items:center; gap:4px;
+  background:transparent; border:none;
+  padding:6px 6px; border-radius:8px; color:#fff; font-size:13.5px; font-weight:500;
+  max-width:72vw; min-width:0; flex:0 1 auto;
 }
-.loc-btn span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.loc-btn svg{flex:0 0 auto; align-self:center;}
+.loc-btn span{overflow:visible; text-overflow:clip; white-space:nowrap; min-width:0;}
+.loc-btn:active{background:rgba(255,255,255,.08);}
 .search-row{padding:0 14px 12px; display:flex; gap:8px; align-items:center;}
 .search-box{
   flex:1; min-width:0; display:flex; align-items:center; gap:8px;
@@ -744,9 +747,9 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
       <div>Basera<small data-i18n="brand_tag">Rooms & Flats · All India</small></div>
     </div>
     <button class="loc-btn" id="locBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21z" stroke="#FF9F1C" stroke-width="2"/><circle cx="12" cy="9.5" r="2.4" fill="#FF9F1C"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21.5s-7-6.4-7-12A7 7 0 0 1 19 9.5c0 5.6-7 12-7 12z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" stroke="#fff" stroke-width="1.8"/></svg>
       <span id="locLabel"></span>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9.5l6 6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
   </div>
   <div class="search-row">
