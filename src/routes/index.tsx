@@ -125,7 +125,7 @@ function Marketplace() {
       setLocationOpen(true);
     };
     button?.addEventListener('click', open, true);
-    return () => button?.removeEventListener('click', open, true);
+    return () => { button?.removeEventListener('click', open, true); frameWindow?.removeEventListener('load', sync); };
   }, [embeddedDocument, location, applyLocation]);
   const closeLocation = () => { setLocationOpen(false); locationTrigger.current?.focus(); };
   useEffect(() => {
