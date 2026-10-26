@@ -206,6 +206,8 @@ header.top{
 .badge-cat.flat{background:#1E8E5A;}
 .badge-cat.hostel{background:#9B51E0;}
 .badge-cat.house{background:#D64545;}
+.badge-cat.office{background:#2C6E9B;}
+.badge-cat.shop{background:#C77A2B;}
 .card-body{flex:1; min-width:0; display:flex; flex-direction:column; padding-right:22px;}
 .badge-verified{
   align-self:flex-start; background:#E4F7EC; color:#0F6B47; border:1px solid #BCE9D3;
@@ -766,6 +768,8 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
     <button class="tab" data-cat="flat" data-i18n="tab_flat">🏠 Flats</button>
     <button class="tab" data-cat="hostel" data-i18n="tab_hostel">🏢 Hostels/PG</button>
     <button class="tab" data-cat="house" data-i18n="tab_house">🏡 Full House</button>
+    <button class="tab" data-cat="office" data-i18n="tab_office">🏢 Office Space</button>
+    <button class="tab" data-cat="shop" data-i18n="tab_shop">🏪 Shops & Godown</button>
   </div>
 </header>
 
@@ -1344,7 +1348,7 @@ var I18N = {
   hi: {
     brand_tag:"रूम्स और फ्लैट्स · पूरे भारत में",
     search_ph:"इलाका खोजें, जैसे अंधेरी, कोरमंगला...",
-    tab_all:"सभी", tab_room:"🛏 रूम्स", tab_flat:"🏠 फ्लैट्स", tab_hostel:"🏢 हॉस्टल/PG", tab_house:"🏡 पूरा घर",
+    tab_all:"सभी", tab_room:"🛏 रूम्स", tab_flat:"🏠 फ्लैट्स", tab_hostel:"🏢 हॉस्टल/PG", tab_house:"🏡 पूरा घर", tab_office:"🏢 ऑफिस स्पेस", tab_shop:"🏪 दुकानें व गोदाम",
     ad_tag_word:"विज्ञापन",
     ad_title:"अपना बिज़नेस बढ़ाएं — Basera पर विज्ञापन दें",
     ad_sub:"लाखों घर ढूंढने वालों तक पहुंचें, पूरे भारत में। Basera users के लिए 100% फ्री है — हम सब्सक्रिप्शन से नहीं, विज्ञापनों से चलते हैं।",
@@ -1355,7 +1359,7 @@ var I18N = {
     loc_all_india_btn:"पूरे भारत में ब्राउज़ करें", loc_search_results:"खोज परिणाम", loc_popular:"लोकप्रिय शहर", loc_all_cities:"सभी शहर",
 
     post_title:"अपना विज्ञापन डालें — बिल्कुल फ्री", post_lbl_type:"मैं लिस्ट कर रहा/रही हूं",
-    cat_room:"रूम", cat_flat:"फ्लैट", cat_hostel_short:"हॉस्टल/PG", cat_house:"पूरा घर",
+    cat_room:"रूम", cat_flat:"फ्लैट", cat_hostel_short:"हॉस्टल/PG", cat_house:"पूरा घर", cat_office:"ऑफिस स्पेस", cat_shop:"दुकान/गोदाम",
     post_lbl_title:"शीर्षक", post_ph_title:"जैसे: मेट्रो स्टेशन के पास 1BHK",
     post_lbl_photos:"फोटो (मालिक द्वारा अपलोड)",
     post_photo_note:"असली फोटो से 3x ज़्यादा रिप्लाई मिलते हैं। सिर्फ इसी डिवाइस पर सेव होती हैं (डेमो के लिए)।",
@@ -1585,7 +1589,7 @@ var I18N = {
   en: {
     brand_tag:"Rooms & Flats · All India",
     search_ph:"Search locality, e.g. Andheri, Koramangala...",
-    tab_all:"All", tab_room:"🛏 Rooms", tab_flat:"🏠 Flats", tab_hostel:"🏢 Hostels/PG", tab_house:"🏡 Full House",
+    tab_all:"All", tab_room:"🛏 Rooms", tab_flat:"🏠 Flats", tab_hostel:"🏢 Hostels/PG", tab_house:"🏡 Full House", tab_office:"🏢 Office Space", tab_shop:"🏪 Shops & Godown",
     ad_tag_word:"AD",
     ad_title:"Grow your business — advertise on Basera",
     ad_sub:"Reach lakhs of home-seekers across India. Basera is 100% free for users — we run on ads, not subscriptions.",
@@ -1596,7 +1600,7 @@ var I18N = {
     loc_all_india_btn:"Browse all India", loc_search_results:"Search results", loc_popular:"Popular Cities", loc_all_cities:"All Cities",
 
     post_title:"Post your Ad — it's free", post_lbl_type:"I'm listing a",
-    cat_room:"Room", cat_flat:"Flat", cat_hostel_short:"Hostel/PG", cat_house:"Full House",
+    cat_room:"Room", cat_flat:"Flat", cat_hostel_short:"Hostel/PG", cat_house:"Full House", cat_office:"Office Space", cat_shop:"Shop/Godown",
     post_lbl_title:"Title", post_ph_title:"e.g. Sunny 1BHK near Metro Station",
     post_lbl_photos:"Photos (owner uploaded)",
     post_photo_note:"Real photos get 3x more replies. Stored only on this device for this demo.",
