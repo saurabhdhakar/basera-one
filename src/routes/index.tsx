@@ -113,7 +113,11 @@ function Marketplace() {
   }, [embeddedDocument]);
   useEffect(() => {
     if (!embeddedDocument) return;
-    if (location) applyLocation(location);
+    // The marketplace listener is registered late in the page; wait for it before syncing.
+    const frameWindow = embeddedDocument.defaultView;
+    const sync = () => { if (location) applyLocation(location); };
+    if (embeddedDocument.readyState === 'complete') sync();
+    else frameWindow?.addEventListener('load', sync, { once: true });
     const button = embeddedDocument.getElementById('locBtn');
     const open = (event: Event) => {
       event.preventDefault(); event.stopImmediatePropagation();
