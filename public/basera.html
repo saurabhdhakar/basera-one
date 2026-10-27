@@ -298,6 +298,27 @@ header.top{
   background:var(--card); color:var(--text); outline:none;
 }
 .field textarea{resize:vertical; min-height:70px;}
+.badge-cat.other{background:#6B7280;}
+.cat-page{position:fixed; inset:0; z-index:120; background:#fff; display:none; flex-direction:column; overflow:auto;}
+.cat-page.open{display:flex;}
+.cat-page-head{display:flex; align-items:center; gap:10px; padding:14px 12px; border-bottom:1px solid #e8e8e8; position:sticky; top:0; background:#fff;}
+.cat-page-head h2{font-size:18px; font-weight:700; color:#002f34;}
+.cat-back{display:flex; padding:6px; color:#002f34; background:none; border:0;}
+.cat-grid{display:grid; grid-template-columns:1fr 1fr;}
+.cat-cell{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:26px 8px; border:0; border-bottom:1px solid #ececec; background:#fff; font-size:14px; font-weight:600; color:#002f34; cursor:pointer;}
+.cat-cell:nth-child(odd){border-right:1px solid #ececec;}
+.cat-cell:active{background:#f3f7f8;}
+.cat-cell .ci{font-size:40px; line-height:1;}
+.pcat-pick{display:flex; align-items:center; justify-content:space-between; border:1px solid var(--line,#ddd); border-radius:8px; padding:10px 12px; font-weight:600;}
+.pcat-pick button{color:#2978e4; font-weight:700; background:none; border:0;}
+.opt-grid{display:flex; flex-wrap:wrap; gap:8px;}
+.opt-chip{border:1.5px solid #d6dbe0; background:#fff; border-radius:999px; padding:8px 13px; font-size:13px; font-weight:600; color:#2b3440; cursor:pointer;}
+.opt-chip.sel{border-color:#2978e4; background:#eaf2fd; color:#1756b0;}
+.field label .req{color:#d33;}
+.spec-tags{margin:12px 16px; padding:14px; background:#fff; border-radius:14px; box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.spec-tags h4{font-size:14px; margin-bottom:10px;}
+.spec-tag-list{display:flex; flex-wrap:wrap; gap:7px;}
+.spec-tag{display:inline-flex; align-items:center; gap:5px; padding:6px 11px; border-radius:999px; background:#eef4fb; color:#16365f; font-size:12.5px; font-weight:600;}
 .seg{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
 .seg button{
   flex:1; padding:10px; border:1.5px solid var(--line); border-radius:9px; font-size:13.5px; font-weight:600; color:var(--text);
@@ -866,15 +887,7 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
   <div class="sheet">
     <div class="sheet-head"><h3 data-i18n="post_title">Post your Ad — it's free</h3><span class="sheet-close" data-close="postModal">✕</span></div>
     <div class="sheet-body">
-      <div class="field">
-        <label data-i18n="post_lbl_type">I'm listing a</label>
-        <div class="seg">
-          <button type="button" class="sel" data-postcat="room" id="segRoom">🛏 <span data-i18n="cat_room">Room</span></button>
-          <button type="button" data-postcat="flat" id="segFlat">🏠 <span data-i18n="cat_flat">Flat</span></button>
-          <button type="button" data-postcat="hostel" id="segHostel">🏢 <span data-i18n="cat_hostel_short">Hostel/PG</span></button>
-          <button type="button" data-postcat="house" id="segHouse">🏡 <span data-i18n="cat_house">Full House</span></button>
-        </div>
-      </div>
+      <div class="field"><label>Category / श्रेणी</label><div class="pcat-pick" id="pCatPick"><span id="pCatName"></span><button type="button" id="pCatChange">Change</button></div></div>
       <div class="field"><label data-i18n="post_lbl_title">Title</label><input id="pTitle" data-i18n-ph="post_ph_title" placeholder="e.g. Sunny 1BHK near Metro Station"></div>
       <div class="field"><label data-i18n="post_lbl_photos">Photos (owner uploaded)</label>
         <div class="photo-row" id="photoRow"></div>
@@ -887,9 +900,7 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
       </div>
       <div class="field"><label data-i18n="post_lbl_locality">Locality / Area</label><div id="roomLocationField"></div><input id="pLocality" type="hidden"></div>
       <div class="field"><label data-i18n="post_lbl_price">Monthly rent (₹)</label><input id="pPrice" type="number" data-i18n-ph="post_ph_price" placeholder="e.g. 12000"></div>
-      <div class="field"><label data-i18n="post_lbl_furnish">Furnishing</label>
-        <select id="pFurnish"><option value="Fully Furnished" data-i18n="furnish_full">Fully Furnished</option><option value="Semi Furnished" data-i18n="furnish_semi">Semi Furnished</option><option value="Unfurnished" data-i18n="furnish_none">Unfurnished</option></select>
-      </div>
+      <div id="pSpecs"></div>
       <div class="field"><label data-i18n="post_lbl_desc">Description</label><textarea id="pDesc" data-i18n-ph="post_ph_desc" placeholder="Tell seekers about the place..."></textarea></div>
       <div class="field"><label data-i18n="post_lbl_phone">Your contact number</label><input id="pPhone" type="tel" data-i18n-ph="post_ph_phone" placeholder="10-digit mobile number"></div>
       <button class="btn" id="submitAdBtn" data-i18n="post_submit">Post Ad — Free, No Subscription</button>
@@ -899,6 +910,10 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
 </div>
 
 <!-- DETAIL MODAL -->
+<div class="cat-page" id="catPage" role="dialog" aria-modal="true" aria-labelledby="catPageTitle">
+  <div class="cat-page-head"><button type="button" class="cat-back" id="catBack" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="catPageTitle">Categories</h2></div>
+  <div class="cat-grid" id="catGrid"></div>
+</div>
 <div class="modal-overlay" id="detailModal">
   <div class="sheet" id="detailSheet"></div>
 </div>
@@ -2700,17 +2715,87 @@ function fillCitySelect(){
 }
 fillCitySelect();
 
-function openPost(){ state.photos = []; state.photoFiles = []; renderPhotoRow(); resetPostForm(); openModal('postModal'); }
-document.getElementById('postNavBtn').addEventListener('click', openPost);
-
-document.querySelectorAll('#postModal [data-postcat]').forEach(function(btn){
-  btn.addEventListener('click', function(){ selectPostCat(btn.getAttribute('data-postcat')); });
+var POST_CATS = [
+  {id:'room', icon:'🛏️', label:'Room'},
+  {id:'flat', icon:'🏢', label:'Flat'},
+  {id:'hostel', icon:'🏨', label:'Hostel/PG'},
+  {id:'house', icon:'🏡', label:'Full House'},
+  {id:'office', icon:'🏬', label:'Office Space'},
+  {id:'shop', icon:'🏪', label:'Shops & Godown'},
+  {id:'other', icon:'📦', label:'Other'}
+];
+var SPEC = {
+  bhkType:{label:'BHK Type', icon:'🛏', opts:['1 BHK','2 BHK','3 BHK','4+ BHK']},
+  furnish:{label:'Furnishing', icon:'🛋', opts:['Fully Furnished','Semi-Furnished','Unfurnished']},
+  parking:{label:'Parking', icon:'🚗', opts:['Car & Bike','Bike Only','No Parking']},
+  sharing:{label:'Sharing Capacity', icon:'👥', opts:['Private Room','2-Sharing','3-Sharing','4+ Sharing/Dormitory']},
+  amenities:{label:'Amenities', icon:'✔', multi:true, opts:['Bed','Study Table','Chair','Wardrobe','Wi-Fi','RO Water','Power Backup']},
+  washroom:{label:'Washroom', icon:'🚻', opts:['Available','Not Available']},
+  parkingSpace:{label:'Parking Space', icon:'🅿️', opts:['Available','Not Available']},
+  tenant:{label:'Preferred Tenant / किसके लिए है', icon:'👪', opts:['Family Only','Bachelors Only','Only Girls','Only Boys','Boys & Girls Both']},
+  acType:{label:'Property Type / प्रकार', icon:'❄️', opts:['AC Room/Flat','Non-AC Room/Flat']},
+  water:{label:'Water Supply / पानी की सुविधा', icon:'💧', opts:['Government Supply / सरकारी नल','Ground Water (Borewell) / बोरिंग (जमीन का पानी)']}
+};
+var NUM_SPEC = { sizeSqft:{label:'Property Size (in Sq.Ft)', icon:'📐', unit:' sq.ft'}, roadWidthFt:{label:'Facing Road Width (in Feet)', icon:'🛣️', unit:' ft road'} };
+function specKeysFor(cat){
+  var k = [];
+  if(cat==='flat'||cat==='house') k.push('bhkType','furnish','parking');
+  if(cat==='room'||cat==='hostel') k.push('sharing','amenities');
+  if(cat==='office'||cat==='shop') k.push('sizeSqft','washroom','parkingSpace','roadWidthFt');
+  if(['room','flat','hostel','house'].indexOf(cat)>=0) k.push('tenant');
+  if(['room','flat','hostel'].indexOf(cat)>=0) k.push('acType');
+  k.push('water');
+  return k;
+}
+function postCatLabel(id){ var c = POST_CATS.find(function(x){return x.id===id;}); return c ? c.label : id; }
+state.specs = {};
+function renderSpecs(){
+  var box = document.getElementById('pSpecs');
+  box.innerHTML = specKeysFor(state.postCat).map(function(key){
+    if(NUM_SPEC[key]) return '<div class="field"><label>'+NUM_SPEC[key].label+' <span class="req">*</span></label><input type="number" min="1" inputmode="numeric" data-spec-num="'+key+'"></div>';
+    var d = SPEC[key], cur = state.specs[key];
+    return '<div class="field"><label>'+d.label+(d.multi?'':' <span class="req">*</span>')+'</label><div class="opt-grid" role="'+(d.multi?'group':'radiogroup')+'">'+
+      d.opts.map(function(o){
+        var sel = d.multi ? (cur||[]).indexOf(o)>=0 : cur===o;
+        return '<button type="button" class="opt-chip'+(sel?' sel':'')+'" role="'+(d.multi?'checkbox':'radio')+'" aria-checked="'+sel+'" data-spec="'+key+'" data-val="'+o.replace(/"/g,'&quot;')+'">'+(d.multi?(sel?'☑ ':'☐ '):'')+o+'</button>';
+      }).join('')+'</div></div>';
+  }).join('');
+}
+document.getElementById('pSpecs').addEventListener('click', function(e){
+  var b = e.target.closest('[data-spec]'); if(!b) return;
+  var key = b.getAttribute('data-spec'), val = b.getAttribute('data-val');
+  if(SPEC[key].multi){
+    var arr = state.specs[key] || [];
+    var i = arr.indexOf(val); if(i>=0) arr.splice(i,1); else arr.push(val);
+    state.specs[key] = arr;
+  } else state.specs[key] = val;
+  renderSpecs();
 });
+document.getElementById('pSpecs').addEventListener('input', function(e){
+  var k = e.target.getAttribute('data-spec-num'); if(k) state.specs[k] = e.target.value;
+});
+document.getElementById('catGrid').innerHTML = POST_CATS.map(function(c){
+  return '<button type="button" class="cat-cell" data-pick="'+c.id+'"><span class="ci" aria-hidden="true">'+c.icon+'</span><span>'+c.label+'</span></button>';
+}).join('');
+var catPageFromForm = false;
+function openCatPage(fromForm){ catPageFromForm = !!fromForm; document.getElementById('catPage').classList.add('open'); }
+function closeCatPage(){ document.getElementById('catPage').classList.remove('open'); }
+document.getElementById('catBack').addEventListener('click', closeCatPage);
+document.getElementById('catGrid').addEventListener('click', function(e){
+  var b = e.target.closest('[data-pick]'); if(!b) return;
+  var cat = b.getAttribute('data-pick');
+  closeCatPage();
+  if(catPageFromForm){ selectPostCat(cat); return; }
+  state.photos = []; state.photoFiles = []; renderPhotoRow(); resetPostForm(); selectPostCat(cat); openModal('postModal');
+});
+document.getElementById('pCatChange').addEventListener('click', function(){ openCatPage(true); });
+function openPost(){ openCatPage(false); }
+document.getElementById('postNavBtn').addEventListener('click', openPost);
 function selectPostCat(cat){
   state.postCat = cat;
-  document.querySelectorAll('#postModal [data-postcat]').forEach(function(btn){
-    btn.classList.toggle('sel', btn.getAttribute('data-postcat')===cat);
-  });
+  state.specs = {};
+  document.getElementById('pCatName').textContent = (POST_CATS.find(function(x){return x.id===cat;})||{icon:''}).icon+' '+postCatLabel(cat);
+  renderSpecs();
 }
 function resetPostForm(){
   state.roomLocation = null;
@@ -2718,7 +2803,32 @@ function resetPostForm(){
   ['pTitle','pLocality','pPrice','pDesc','pPhone'].forEach(function(id){ document.getElementById(id).value=''; });
   selectPostCat('room');
 }
-
+function collectSpecs(){
+  var out = {}, missing = null;
+  specKeysFor(state.postCat).forEach(function(key){
+    if(NUM_SPEC[key]){
+      var n = parseFloat(state.specs[key]);
+      if(!(n>0)){ missing = missing || NUM_SPEC[key].label; return; }
+      out[key] = n; return;
+    }
+    var v = state.specs[key];
+    if(SPEC[key].multi){ out[key] = (v||[]).slice(); return; }
+    if(!v){ missing = missing || SPEC[key].label; return; }
+    out[key] = v;
+  });
+  return { specs: out, missing: missing };
+}
+function specTagsHTML(l){
+  var tags = [];
+  specKeysFor(l.category).forEach(function(key){
+    var v = l[key]; if(v==null || v==='' || (Array.isArray(v)&&!v.length)) return;
+    if(NUM_SPEC[key]) tags.push(NUM_SPEC[key].icon+' '+v+NUM_SPEC[key].unit);
+    else if(Array.isArray(v)) v.forEach(function(a){ tags.push('✔ '+a); });
+    else tags.push(SPEC[key].icon+' '+(key==='washroom'?'Washroom: ':key==='parkingSpace'?'Parking: ':'')+v);
+  });
+  if(!tags.length) return '';
+  return '<div class="spec-tags"><h4>Specifications</h4><div class="spec-tag-list">'+tags.map(function(x){return '<span class="spec-tag">'+String(x).replace(/</g,'&lt;')+'</span>';}).join('')+'</div></div>';
+}
 document.addEventListener('basera-room-location', function(event){
   var location = event.detail;
   state.roomLocation = location;
@@ -2777,7 +2887,8 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
   var city = document.getElementById('pCity').value;
   var locality = document.getElementById('pLocality').value.trim();
   var price = parseInt(document.getElementById('pPrice').value, 10);
-  var furnish = document.getElementById('pFurnish').value;
+  var specResult = collectSpecs();
+  var furnish = specResult.specs.furnish || '';
   var desc = document.getElementById('pDesc').value.trim();
   var phone = document.getElementById('pPhone').value.trim();
 
@@ -2785,6 +2896,7 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
     showToast(t('toast_fill_required'));
     return;
   }
+  if(specResult.missing){ showToast('Please select: '+specResult.missing); return; }
   if(!fbUser){
     showToast(t('toast_ad_submit_failed'));
     return;
@@ -2798,7 +2910,7 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
     category: state.postCat,
     title: title, city: city, locality: locality, price: price,
     furnish: furnish,
-    bhk: state.postCat==='room' ? 'Single Room' : (state.postCat==='hostel' ? 'Hostel/PG bed' : ''),
+    bhk: specResult.specs.bhkType || specResult.specs.sharing || '',
     bath: (state.postCat==='room'||state.postCat==='hostel') ? 1 : 2,
     area: null,
     ownerName: fbUser.displayName || 'Owner',
@@ -2806,6 +2918,7 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
     desc: desc || '',
     listedBy: 'owner'
   };
+  Object.keys(specResult.specs).forEach(function(k){ fields[k] = specResult.specs[k]; });
   if(state.roomLocation){
     fields.location = state.roomLocation;
     fields.address = state.roomLocation.address;
@@ -2859,6 +2972,7 @@ function openDetail(l){
   if(l.listedBy) pinfoRows.push([t('pinfo_listed_by'), l.listedBy==='dealer' ? t('listed_by_dealer') : t('listed_by_owner')]);
   if(l.carpetArea) pinfoRows.push([t('pinfo_carpet_area'), l.carpetArea]);
   if(l.parking) pinfoRows.push([t('pinfo_parking'), l.parking]);
+  if(l.tenant) pinfoRows.push(['Preferred Tenant', l.tenant]);
   if(l.maintenance) pinfoRows.push([t('pinfo_maintenance'), fmtPrice(l.maintenance)]);
   if(l.projectName) pinfoRows.push([t('pinfo_project_name'), l.projectName]);
   if(l.bath != null && l.bath !== '') pinfoRows.push([t('pinfo_washrooms'), l.bath]);
@@ -2884,6 +2998,7 @@ function openDetail(l){
     '</div>'+
     '<div class="epc-loc">📍 '+[l.locality,l.city].filter(Boolean).join(', ')+'</div>'+
   '</div>'+
+  specTagsHTML(l)+
 
   (pinfoRows.length ? (
     '<div class="pinfo-card" id="pinfoCard">'+
