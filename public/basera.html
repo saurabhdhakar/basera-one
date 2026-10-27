@@ -2919,6 +2919,7 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
     listedBy: 'owner'
   };
   Object.keys(specResult.specs).forEach(function(k){ fields[k] = specResult.specs[k]; });
+  fields.furnish = furnish;
   if(state.roomLocation){
     fields.location = state.roomLocation;
     fields.address = state.roomLocation.address;
