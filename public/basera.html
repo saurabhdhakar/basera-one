@@ -208,6 +208,8 @@ header.top{
 .badge-cat.house{background:#D64545;}
 .badge-cat.office{background:#2C6E9B;}
 .badge-cat.shop{background:#C77A2B;}
+.badge-cat.pg{background:#12808C;}
+.badge-cat.godown{background:#5C6B7A;}
 .card-body{flex:1; min-width:0; display:flex; flex-direction:column; padding-right:22px;}
 .badge-verified{
   align-self:flex-start; background:#E4F7EC; color:#0F6B47; border:1px solid #BCE9D3;
@@ -787,10 +789,12 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
     <button class="tab active" data-cat="all" data-i18n="tab_all">All</button>
     <button class="tab" data-cat="room" data-i18n="tab_room">🛏 Rooms</button>
     <button class="tab" data-cat="flat" data-i18n="tab_flat">🏠 Flats</button>
-    <button class="tab" data-cat="hostel" data-i18n="tab_hostel">🏢 Hostels/PG</button>
+    <button class="tab" data-cat="hostel" data-i18n="tab_hostel">🏨 Hostel</button>
+    <button class="tab" data-cat="pg" data-i18n="tab_pg">🛌 PG</button>
     <button class="tab" data-cat="house" data-i18n="tab_house">🏡 Full House</button>
     <button class="tab" data-cat="office" data-i18n="tab_office">🏢 Office Space</button>
-    <button class="tab" data-cat="shop" data-i18n="tab_shop">🏪 Shops & Godown</button>
+    <button class="tab" data-cat="shop" data-i18n="tab_shop">🏪 Shop</button>
+    <button class="tab" data-cat="godown" data-i18n="tab_godown">🏭 Godown</button>
   </div>
 </header>
 
@@ -1363,7 +1367,7 @@ var I18N = {
   hi: {
     brand_tag:"रूम्स और फ्लैट्स · पूरे भारत में",
     search_ph:"इलाका खोजें, जैसे अंधेरी, कोरमंगला...",
-    tab_all:"सभी", tab_room:"🛏 रूम्स", tab_flat:"🏠 फ्लैट्स", tab_hostel:"🏢 हॉस्टल/PG", tab_house:"🏡 पूरा घर", tab_office:"🏢 ऑफिस स्पेस", tab_shop:"🏪 दुकानें व गोदाम",
+    tab_all:"सभी", tab_room:"🛏 रूम्स", tab_flat:"🏠 फ्लैट्स", tab_hostel:"🏨 हॉस्टल", tab_pg:"🛌 पीजी", tab_house:"🏡 पूरा घर", tab_office:"🏢 ऑफिस स्पेस", tab_shop:"🏪 दुकान", tab_godown:"🏭 गोदाम",
     ad_tag_word:"विज्ञापन",
     ad_title:"अपना बिज़नेस बढ़ाएं — Basera पर विज्ञापन दें",
     ad_sub:"लाखों घर ढूंढने वालों तक पहुंचें, पूरे भारत में। Basera users के लिए 100% फ्री है — हम सब्सक्रिप्शन से नहीं, विज्ञापनों से चलते हैं।",
@@ -1374,7 +1378,7 @@ var I18N = {
     loc_all_india_btn:"पूरे भारत में ब्राउज़ करें", loc_search_results:"खोज परिणाम", loc_popular:"लोकप्रिय शहर", loc_all_cities:"सभी शहर",
 
     post_title:"अपना विज्ञापन डालें — बिल्कुल फ्री", post_lbl_type:"मैं लिस्ट कर रहा/रही हूं",
-    cat_room:"रूम", cat_flat:"फ्लैट", cat_hostel_short:"हॉस्टल/PG", cat_house:"पूरा घर", cat_office:"ऑफिस स्पेस", cat_shop:"दुकान/गोदाम", cat_other:"अन्य",
+    cat_room:"रूम", cat_flat:"फ्लैट", cat_hostel:"हॉस्टल", cat_pg:"पीजी", cat_house:"पूरा घर", cat_office:"ऑफिस स्पेस", cat_shop:"दुकान", cat_godown:"गोदाम", cat_other:"अन्य",
     post_lbl_title:"शीर्षक", post_ph_title:"जैसे: मेट्रो स्टेशन के पास 1BHK",
     post_lbl_photos:"फोटो (मालिक द्वारा अपलोड)",
     post_photo_note:"असली फोटो से 3x ज़्यादा रिप्लाई मिलते हैं। सिर्फ इसी डिवाइस पर सेव होती हैं (डेमो के लिए)।",
@@ -1413,7 +1417,7 @@ var I18N = {
     furnish_all_opt:"सभी",
 
     results_prefix:"इनके लिए परिणाम", ads_word:"विज्ञापन",
-    cat_hostel:"हॉस्टल/PG", verified_tag:"✓ सत्यापित",
+    cat_hostel:"हॉस्टल", cat_pg:"पीजी", cat_shop:"दुकान", cat_godown:"गोदाम", verified_tag:"✓ सत्यापित",
 
     detail_head:"लिस्टिंग विवरण", per_month:"/माह", spec_type:"प्रकार", spec_furnish:"फर्नीशिंग",
     call_owner:"मालिक को कॉल करें",
@@ -1604,7 +1608,7 @@ var I18N = {
   en: {
     brand_tag:"Rooms & Flats · All India",
     search_ph:"Search locality, e.g. Andheri, Koramangala...",
-    tab_all:"All", tab_room:"🛏 Rooms", tab_flat:"🏠 Flats", tab_hostel:"🏢 Hostels/PG", tab_house:"🏡 Full House", tab_office:"🏢 Office Space", tab_shop:"🏪 Shops & Godown",
+    tab_all:"All", tab_room:"🛏 Rooms", tab_flat:"🏠 Flats", tab_hostel:"🏨 Hostel", tab_pg:"🛌 PG", tab_house:"🏡 Full House", tab_office:"🏢 Office Space", tab_shop:"🏪 Shop", tab_godown:"🏭 Godown",
     ad_tag_word:"AD",
     ad_title:"Grow your business — advertise on Basera",
     ad_sub:"Reach lakhs of home-seekers across India. Basera is 100% free for users — we run on ads, not subscriptions.",
@@ -1615,7 +1619,7 @@ var I18N = {
     loc_all_india_btn:"Browse all India", loc_search_results:"Search results", loc_popular:"Popular Cities", loc_all_cities:"All Cities",
 
     post_title:"Post your Ad — it's free", post_lbl_type:"I'm listing a",
-    cat_room:"Room", cat_flat:"Flat", cat_hostel_short:"Hostel/PG", cat_house:"Full House", cat_office:"Office Space", cat_shop:"Shop/Godown", cat_other:"Other",
+    cat_room:"Room", cat_flat:"Flat", cat_hostel:"Hostel", cat_pg:"PG", cat_house:"Full House", cat_office:"Office Space", cat_shop:"Shop", cat_godown:"Godown", cat_other:"Other",
     post_lbl_title:"Title", post_ph_title:"e.g. Sunny 1BHK near Metro Station",
     post_lbl_photos:"Photos (owner uploaded)",
     post_photo_note:"Real photos get 3x more replies. Stored only on this device for this demo.",
@@ -1654,7 +1658,7 @@ var I18N = {
     furnish_all_opt:"All",
 
     results_prefix:"Results for", ads_word:"ads",
-    cat_hostel:"Hostel/PG", verified_tag:"✓ Verified",
+    cat_hostel:"Hostel", cat_pg:"PG", cat_shop:"Shop", cat_godown:"Godown", verified_tag:"✓ Verified",
 
     detail_head:"Listing details", per_month:"/month", spec_type:"Type", spec_furnish:"Furnishing",
     call_owner:"Call Owner",
@@ -2718,10 +2722,12 @@ fillCitySelect();
 var POST_CATS = [
   {id:'room', icon:'🛏️', label:'Room'},
   {id:'flat', icon:'🏢', label:'Flat'},
-  {id:'hostel', icon:'🏨', label:'Hostel/PG'},
+  {id:'hostel', icon:'🏨', label:'Hostel'},
+  {id:'pg', icon:'🛌', label:'PG'},
   {id:'house', icon:'🏡', label:'Full House'},
   {id:'office', icon:'🏬', label:'Office Space'},
-  {id:'shop', icon:'🏪', label:'Shops & Godown'},
+  {id:'shop', icon:'🏪', label:'Shop'},
+  {id:'godown', icon:'🏭', label:'Godown'},
   {id:'other', icon:'📦', label:'Other'}
 ];
 var SPEC = {
@@ -2740,10 +2746,10 @@ var NUM_SPEC = { sizeSqft:{label:'Property Size (in Sq.Ft)', icon:'📐', unit:'
 function specKeysFor(cat){
   var k = [];
   if(cat==='flat'||cat==='house') k.push('bhkType','furnish','parking');
-  if(cat==='room'||cat==='hostel') k.push('sharing','amenities');
-  if(cat==='office'||cat==='shop') k.push('sizeSqft','washroom','parkingSpace','roadWidthFt');
-  if(['room','flat','hostel','house'].indexOf(cat)>=0) k.push('tenant');
-  if(['room','flat','hostel'].indexOf(cat)>=0) k.push('acType');
+  if(cat==='room'||cat==='hostel'||cat==='pg') k.push('sharing','amenities');
+  if(cat==='office'||cat==='shop'||cat==='godown') k.push('sizeSqft','washroom','parkingSpace','roadWidthFt');
+  if(['room','flat','hostel','pg','house'].indexOf(cat)>=0) k.push('tenant');
+  if(['room','flat','hostel','pg'].indexOf(cat)>=0) k.push('acType');
   k.push('water');
   return k;
 }
@@ -2911,7 +2917,7 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
     title: title, city: city, locality: locality, price: price,
     furnish: furnish,
     bhk: specResult.specs.bhkType || specResult.specs.sharing || '',
-    bath: (state.postCat==='room'||state.postCat==='hostel') ? 1 : 2,
+    bath: (state.postCat==='room'||state.postCat==='hostel'||state.postCat==='pg') ? 1 : 2,
     area: null,
     ownerName: fbUser.displayName || 'Owner',
     phone: phone,
