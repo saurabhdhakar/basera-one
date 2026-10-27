@@ -2888,7 +2888,7 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
   var locality = document.getElementById('pLocality').value.trim();
   var price = parseInt(document.getElementById('pPrice').value, 10);
   var specResult = collectSpecs();
-  var furnish = specResult.specs.furnish || '';
+  var furnish = (specResult.specs.furnish || '').replace('Semi-Furnished','Semi Furnished');
   var desc = document.getElementById('pDesc').value.trim();
   var phone = document.getElementById('pPhone').value.trim();
 
