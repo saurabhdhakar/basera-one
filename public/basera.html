@@ -308,9 +308,13 @@ header.top{
 .cat-back{display:flex; padding:6px; color:#002f34; background:none; border:0;}
 .cat-grid{display:grid; grid-template-columns:1fr 1fr;}
 .cat-cell{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:26px 8px; border:0; border-bottom:1px solid #ececec; background:#fff; font-size:14px; font-weight:600; color:#002f34; cursor:pointer;}
-.cat-cell:nth-child(odd){border-right:1px solid #ececec;}
+.cat-cell:nth-of-type(odd){border-right:1px solid #ececec;}
 .cat-cell:active{background:#f3f7f8;}
 .cat-cell .ci{font-size:40px; line-height:1;}
+.cat-sub{grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:10px; padding:2px 14px 18px; background:#fff;}
+.cat-sub-chip{display:flex; align-items:center; gap:7px; border:1.5px solid #d6dbe0; background:#fff; border-radius:999px; padding:10px 16px; font-size:13.5px; font-weight:600; color:#002f34; cursor:pointer;}
+.cat-sub-chip:active{background:#f3f7f8; border-color:#002f34;}
+.cat-sub-chip .ci-sm{font-size:16px; line-height:1;}
 .pcat-pick{display:flex; align-items:center; justify-content:space-between; border:1px solid var(--line,#ddd); border-radius:8px; padding:10px 12px; font-weight:600;}
 .pcat-pick button{color:#2978e4; font-weight:700; background:none; border:0;}
 .opt-grid{display:flex; flex-wrap:wrap; gap:8px;}
@@ -2730,6 +2734,14 @@ var POST_CATS = [
   {id:'godown', icon:'🏭', label:'Godown'},
   {id:'other', icon:'📦', label:'Other'}
 ];
+// Categories pick page: 5 merged options; merged groups expand inline sub-choices
+var CAT_PICKS = [
+  {icon:'🛏️', label:'Room', cats:['room']},
+  {icon:'🏠', label:'Flat / House', cats:['flat','house']},
+  {icon:'🏨', label:'Hostel / PG', cats:['hostel','pg']},
+  {icon:'🏬', label:'Commercial Space', cats:['office','shop','godown']},
+  {icon:'📦', label:'Other', cats:['other']}
+];
 var SPEC = {
   bhkType:{label:'BHK Type', icon:'🛏', opts:['1 BHK','2 BHK','3 BHK','4+ BHK']},
   furnish:{label:'Furnishing', icon:'🛋', opts:['Fully Furnished','Semi-Furnished','Unfurnished']},
@@ -2780,19 +2792,40 @@ document.getElementById('pSpecs').addEventListener('click', function(e){
 document.getElementById('pSpecs').addEventListener('input', function(e){
   var k = e.target.getAttribute('data-spec-num'); if(k) state.specs[k] = e.target.value;
 });
-document.getElementById('catGrid').innerHTML = POST_CATS.map(function(c){
-  return '<button type="button" class="cat-cell" data-pick="'+c.id+'"><span class="ci" aria-hidden="true">'+c.icon+'</span><span>'+c.label+'</span></button>';
-}).join('');
-var catPageFromForm = false;
-function openCatPage(fromForm){ catPageFromForm = !!fromForm; document.getElementById('catPage').classList.add('open'); }
-function closeCatPage(){ document.getElementById('catPage').classList.remove('open'); }
-document.getElementById('catBack').addEventListener('click', closeCatPage);
-document.getElementById('catGrid').addEventListener('click', function(e){
-  var b = e.target.closest('[data-pick]'); if(!b) return;
-  var cat = b.getAttribute('data-pick');
+function catPostTarget(cat){
   closeCatPage();
   if(catPageFromForm){ selectPostCat(cat); return; }
   state.photos = []; state.photoFiles = []; renderPhotoRow(); resetPostForm(); selectPostCat(cat); openModal('postModal');
+}
+function closeCatSubs(){ document.querySelectorAll('#catGrid .cat-sub').forEach(function(n){ n.remove(); }); }
+function openCatSub(i, cell){
+  closeCatSubs();
+  var c = CAT_PICKS[i];
+  var row = document.createElement('div');
+  row.className = 'cat-sub';
+  row.innerHTML = c.cats.map(function(id){
+    var p = POST_CATS.find(function(x){return x.id===id;});
+    return '<button type="button" class="cat-sub-chip" data-pick="'+id+'"><span class="ci-sm" aria-hidden="true">'+p.icon+'</span>'+p.label+'</button>';
+  }).join('');
+  cell.after(row);
+}
+document.getElementById('catGrid').innerHTML = CAT_PICKS.map(function(c, i){
+  return '<button type="button" class="cat-cell" data-group="'+i+'"><span class="ci" aria-hidden="true">'+c.icon+'</span><span>'+c.label+'</span></button>';
+}).join('');
+var catPageFromForm = false;
+function openCatPage(fromForm){ catPageFromForm = !!fromForm; document.getElementById('catPage').classList.add('open'); }
+function closeCatPage(){ closeCatSubs(); document.getElementById('catPage').classList.remove('open'); }
+document.getElementById('catBack').addEventListener('click', closeCatPage);
+document.getElementById('catGrid').addEventListener('click', function(e){
+  var chip = e.target.closest('.cat-sub-chip');
+  if(chip){ catPostTarget(chip.getAttribute('data-pick')); return; }
+  var b = e.target.closest('.cat-cell'); if(!b) return;
+  var i = Number(b.getAttribute('data-group'));
+  var c = CAT_PICKS[i]; if(!c) return;
+  if(c.cats.length === 1){ catPostTarget(c.cats[0]); return; }
+  var existing = document.querySelector('#catGrid .cat-sub');
+  if(existing && existing.previousElementSibling === b){ closeCatSubs(); return; }
+  openCatSub(i, b);
 });
 document.getElementById('pCatChange').addEventListener('click', function(){ openCatPage(true); });
 function openPost(){ openCatPage(false); }
