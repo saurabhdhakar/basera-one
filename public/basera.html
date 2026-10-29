@@ -314,6 +314,10 @@ header.top{
 .cf textarea:focus{border-color:#2978e4;}
 .cf-meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#7a7a7a;margin-top:4px;min-height:15px;}
 .cf .cf-err{color:#d93025;}
+.cf-tabs{display:flex;gap:10px;margin-top:8px;}
+.cf-tab{min-width:72px;padding:9px 18px;border:1.5px solid #c9c9c9;border-radius:4px;background:#fff;font:inherit;font-size:14.5px;color:#002f34;cursor:pointer;}
+.cf-tab.on{border-color:#2978e4;color:#2978e4;background:#eaf2fd;font-weight:600;}
+#commDlgOpts{max-height:56vh;overflow-y:auto;}
 .cf.err label{color:#d93025;}
 .cf.err .cf-line,.cf.err input{border-bottom-color:#d93025;}
 .cf.err textarea{border-color:#d93025;}
@@ -954,7 +958,7 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
   <div class="cat-page-head"><button type="button" class="cat-back" id="commBack" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="commTitle">Include some details</h2></div>
   <div class="comm-body" id="commBody"></div>
   <div class="comm-foot"><button type="button" class="comm-next" id="commNext">Next</button></div>
-  <div class="comm-dlg" id="commDlg" role="dialog" aria-modal="true"><div class="comm-dlg-box"><div class="comm-dlg-title">For Rent: Shops &amp; Offices</div><div class="comm-dlg-sub" id="commDlgSub"></div><div id="commDlgOpts"></div><div class="comm-dlg-act"><button type="button" id="commDlgCancel">CANCEL</button></div></div></div>
+  <div class="comm-dlg" id="commDlg" role="dialog" aria-modal="true"><div class="comm-dlg-box"><div class="comm-dlg-title" id="commDlgTitle">For Rent: Shops &amp; Offices</div><div class="comm-dlg-sub" id="commDlgSub"></div><div id="commDlgOpts"></div><div class="comm-dlg-act"><button type="button" id="commDlgCancel">CANCEL</button></div></div></div>
 </div>
 <div class="modal-overlay" id="detailModal">
   <div class="sheet" id="detailSheet"></div>
@@ -2856,6 +2860,7 @@ document.getElementById('catGrid').addEventListener('click', function(e){
   var b = e.target.closest('.cat-cell'); if(!b) return;
   var i = Number(b.getAttribute('data-group'));
   var c = CAT_PICKS[i]; if(!c) return;
+  if(c.label === 'Flat / House'){ closeCatPage(); openCommPage('house'); return; }
   if(c.label === 'Commercial Space'){ closeCatPage(); openCommPage(); return; }
   if(c.cats.length === 1){ catPostTarget(c.cats[0]); return; }
   var existing = document.querySelector('#catGrid .cat-sub');
@@ -2864,7 +2869,7 @@ document.getElementById('catGrid').addEventListener('click', function(e){
 });
 
 // Commercial Space: OLX-style detail form (only for the Commercial Space pick)
-var COMM_FIELDS = [
+var COMM_FIELDS_COMM = [
   {k:'type', label:'Types', req:true, opts:['Shops','Office space','Warehouse','Other']},
   {k:'furnishing', label:'Furnishing', req:true, opts:['Furnished','Semi-Furnished','Unfurnished']},
   {k:'listedBy', label:'Listed by', req:true, opts:['Builder','Dealer','Owner']},
@@ -2877,12 +2882,32 @@ var COMM_FIELDS = [
   {k:'adTitle', label:'Ad title*', text:true, max:70, ph:'Mention the key features of your item'},
   {k:'adDesc', label:'Describe what you are selling *', area:true, max:4096, ph:'Include condition, features and reason for selling'}
 ];
+var HOUSE_FIELDS = [
+  {k:'type', label:'Type *', req:true, opts:['Apartments','Builder Floors','Farm Houses','Houses & Villas']},
+  {k:'bhk', label:'BHK *', req:true, opts:['1','2','3','4','4+']},
+  {k:'furnishing', label:'Furnishing *', req:true, opts:['Furnished','Semi-Furnished','Unfurnished']},
+  {k:'listedBy', label:'Listed by *', req:true, opts:['Builder','Dealer','Owner']},
+  {k:'facing', label:'Facing', opts:['East','North','North-East','North-West','South','South-East','South-West','West']},
+  {k:'waterSupply', label:'Water Supply', opts:['Government Supply','Ground Water','Both (Govt. & Ground)']},
+  {k:'superArea', label:'Super Builtup area sqft *', num:true},
+  {k:'carpetArea', label:'Carpet Area sqft *', num:true},
+  {k:'bachelors', label:'Bachelors Allowed', tabs:['No','Yes']},
+  {k:'maintenance', label:'Maintenance (Monthly)', num:true},
+  {k:'totalFloors', label:'Total Floors', num:true},
+  {k:'floorNo', label:'Floor No', num:true},
+  {k:'carParking', label:'Car Parking', opts:['0','1','2','3','3+']},
+  {k:'projectName', label:'Project Name', text:true, max:70},
+  {k:'adTitle', label:'Ad title *', text:true, max:70, ph:'Mention the key features of your item (e.g. brand, model, age, type)'},
+  {k:'adDesc', label:'Describe what you are selling *', area:true, max:4096, ph:'Include condition, features and reason for selling'}
+];
+var COMM_FIELDS = COMM_FIELDS_COMM, commMode = 'comm';
 var comm = {};
 function escA(v){ return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 function renderComm(){
   document.getElementById('commBody').innerHTML = COMM_FIELDS.map(function(f){
     var v = comm[f.k] || '', meta = '<div class="cf-meta"><span class="cf-err" data-err="'+f.k+'"></span>'+(f.max?'<span data-count="'+f.k+'">'+v.length+' / '+f.max+'</span>':'')+'</div>';
     if(f.opts) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><button type="button" class="cf-line" data-pop="'+f.k+'">'+(v?'<span>'+escA(v)+'</span>':'<span class="ph">&nbsp;</span>')+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9.5l6 6 6-6" stroke="#5a5a5a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+meta+'</div>';
+    if(f.tabs) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><div class="cf-tabs">'+f.tabs.map(function(t){ return '<button type="button" class="cf-tab'+(v===t?' on':'')+'" data-tab="'+f.k+'" data-val="'+escA(t)+'">'+escA(t)+'</button>'; }).join('')+'</div>'+meta+'</div>';
     if(f.area) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><textarea data-in="'+f.k+'" maxlength="'+f.max+'" placeholder="'+escA(f.ph)+'">'+escA(v)+'</textarea>'+meta+'</div>';
     return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><input data-in="'+f.k+'" '+(f.num?'type="number" inputmode="numeric" min="0"':'type="text" maxlength="'+f.max+'"')+(f.ph?' placeholder="'+escA(f.ph)+'"':'')+' value="'+escA(v)+'">'+meta+'</div>';
   }).join('');
@@ -2906,7 +2931,9 @@ function closeCommPop(){
   var d = document.getElementById('commDlg'); d.classList.remove('show');
   setTimeout(function(){ d.classList.remove('open'); }, 180); commPopKey = null;
 }
-function openCommPage(){ comm = {}; renderComm(); document.getElementById('commPage').classList.add('open'); document.getElementById('commBody').scrollTop = 0; }
+function openCommPage(mode){ commMode = mode === 'house' ? 'house' : 'comm'; COMM_FIELDS = commMode === 'house' ? HOUSE_FIELDS : COMM_FIELDS_COMM;
+  document.getElementById('commDlgTitle').textContent = commMode === 'house' ? 'For Rent: Houses & Apartments' : 'For Rent: Shops & Offices';
+  comm = commMode === 'house' ? {bachelors:'No'} : {}; renderComm(); document.getElementById('commPage').classList.add('open'); document.getElementById('commBody').scrollTop = 0; }
 function closeCommPage(){ document.getElementById('commPage').classList.remove('open'); }
 document.getElementById('commBack').addEventListener('click', closeCommPage);
 document.getElementById('commDlgCancel').addEventListener('click', closeCommPop);
@@ -2920,6 +2947,8 @@ document.getElementById('commDlg').addEventListener('click', function(e){
 });
 var commBody = document.getElementById('commBody');
 commBody.addEventListener('click', function(e){
+  var t = e.target.closest('[data-tab]');
+  if(t){ var tk = t.getAttribute('data-tab'); comm[tk] = t.getAttribute('data-val'); t.parentNode.querySelectorAll('.cf-tab').forEach(function(x){ x.classList.toggle('on', x === t); }); clearCommErr(tk); return; }
   var b = e.target.closest('[data-pop]'); if(!b) return;
   var k = b.getAttribute('data-pop'); clearCommErr(k); openCommPop(k);
 });
@@ -2933,7 +2962,7 @@ commBody.addEventListener('input', function(e){
 function validateComm(){
   var ok = true, first = null;
   function bad(k, msg){ ok = false; first = first || k; setCommErr(k, msg); }
-  ['type','furnishing','listedBy','carParking','waterSupply'].forEach(function(k){ if(!comm[k]) bad(k, ''); });
+  COMM_FIELDS.forEach(function(f){ if(f.opts && f.req && !comm[f.k]) bad(f.k, ''); });
   var sa = comm.superArea, sn = Number(sa);
   if(!sa || !(sn >= 0) || sn > 99999999) bad('superArea', 'Super Builtup area sqft has a maximum value of 99999999');
   var ca = comm.carpetArea, cn = Number(ca);
@@ -2945,6 +2974,15 @@ function validateComm(){
 }
 document.getElementById('commNext').addEventListener('click', function(){
   if(!validateComm()) return;
+  if(commMode === 'house'){
+    var hcat = (comm.type === 'Apartments' || comm.type === 'Builder Floors') ? 'flat' : 'house';
+    var hd = Object.assign({}, comm, {mode:'house'});
+    closeCommPage(); catPostTarget(hcat); state.comm = hd;
+    document.getElementById('pTitle').value = hd.adTitle.trim();
+    document.getElementById('pDesc').value = hd.adDesc.trim();
+    document.getElementById('pSpecs').style.display = 'none';
+    return;
+  }
   var cat = comm.type === 'Shops' ? 'shop' : comm.type === 'Warehouse' ? 'godown' : 'office';
   var data = Object.assign({}, comm);
   closeCommPage();
@@ -2972,6 +3010,8 @@ function resetPostForm(){
   selectPostCat('room');
 }
 function collectSpecs(){
+  function nOr(v){ return v ? Number(v) : null; }
+  if(state.comm && state.comm.mode === 'house'){ var h = state.comm; return { specs: { houseType:h.type, bhkType:h.bhk === '4+' ? '4+ BHK' : h.bhk+' BHK', furnish:h.furnishing === 'Furnished' ? 'Fully Furnished' : h.furnishing, listedByType:h.listedBy, facing:h.facing||null, waterSupply:h.waterSupply||null, superArea:Number(h.superArea), carpetArea:Number(h.carpetArea), bachelorsAllowed:h.bachelors, maintenance:nOr(h.maintenance), totalFloors:nOr(h.totalFloors), floorNo:nOr(h.floorNo), carParking:h.carParking||null, projectName:h.projectName||null }, missing:null }; }
   if(state.comm){ var c = state.comm; return { specs: { commType:c.type, furnish:c.furnishing, listedByType:c.listedBy, superArea:Number(c.superArea), carpetArea:Number(c.carpetArea), maintenance:c.maintenance?Number(c.maintenance):null, carParking:c.carParking, washrooms:c.washrooms?Number(c.washrooms):null, waterSupply:c.waterSupply, sizeSqft:Number(c.superArea) }, missing:null }; }
   var out = {}, missing = null;
   specKeysFor(state.postCat).forEach(function(key){
