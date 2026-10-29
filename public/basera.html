@@ -301,6 +301,34 @@ header.top{
 }
 .field textarea{resize:vertical; min-height:70px;}
 .badge-cat.other{background:#6B7280;}
+.comm-page{position:fixed;inset:0;z-index:125;background:#fff;display:none;flex-direction:column;}
+.comm-page.open{display:flex;}
+.comm-body{flex:1;overflow:auto;padding:8px 18px 24px;}
+.cf{position:relative;padding-top:18px;}
+.cf label{display:block;font-size:12.5px;color:#5a5a5a;margin-bottom:2px;}
+.cf .cf-line,.cf input,.cf textarea{width:100%;border:0;border-bottom:1.5px solid #c9c9c9;background:transparent;font:inherit;font-size:15.5px;color:#002f34;padding:8px 0;outline:none;border-radius:0;}
+.cf .cf-line{display:flex;justify-content:space-between;align-items:center;cursor:pointer;text-align:left;}
+.cf .cf-line .ph{color:#9a9a9a;}
+.cf textarea{border:1.5px solid #c9c9c9;border-radius:4px;padding:10px;min-height:120px;resize:vertical;margin-top:4px;}
+.cf input:focus,.cf .cf-line:focus{border-bottom-color:#2978e4;}
+.cf textarea:focus{border-color:#2978e4;}
+.cf-meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#7a7a7a;margin-top:4px;min-height:15px;}
+.cf .cf-err{color:#d93025;}
+.cf.err label{color:#d93025;}
+.cf.err .cf-line,.cf.err input{border-bottom-color:#d93025;}
+.cf.err textarea{border-color:#d93025;}
+.comm-foot{position:sticky;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e8e8e8;}
+.comm-next{width:100%;height:50px;border:0;border-radius:6px;background:#2978e4;color:#fff;font-size:16px;font-weight:700;cursor:pointer;}
+.comm-dlg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:130;padding:24px;opacity:0;transition:opacity .18s;}
+.comm-dlg.open{display:flex;}
+.comm-dlg.show{opacity:1;}
+.comm-dlg-box{background:#fff;width:100%;max-width:340px;border-radius:4px;padding:20px 0 8px;box-shadow:0 10px 30px rgba(0,0,0,.3);}
+.comm-dlg-title{font-size:17px;font-weight:700;color:#002f34;padding:0 22px;}
+.comm-dlg-sub{font-size:14px;color:#5a5a5a;padding:4px 22px 10px;}
+.comm-dlg-opt{display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:15.5px;color:#222;padding:13px 22px;cursor:pointer;}
+.comm-dlg-opt:active,.comm-dlg-opt:hover{background:#f2f6fc;}
+.comm-dlg-act{display:flex;justify-content:flex-end;padding:6px 14px 4px;}
+.comm-dlg-act button{border:0;background:none;color:#2978e4;font-weight:700;font-size:14px;padding:10px 12px;cursor:pointer;letter-spacing:.4px;}
 .cat-page{position:fixed; inset:0; z-index:120; background:#fff; display:none; flex-direction:column; overflow:auto;}
 .cat-page.open{display:flex;}
 .cat-page-head{display:flex; align-items:center; gap:10px; padding:14px 12px; border-bottom:1px solid #e8e8e8; position:sticky; top:0; background:#fff;}
@@ -921,6 +949,12 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
 <div class="cat-page" id="catPage" role="dialog" aria-modal="true" aria-labelledby="catPageTitle">
   <div class="cat-page-head"><button type="button" class="cat-back" id="catBack" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="catPageTitle">Categories</h2></div>
   <div class="cat-grid" id="catGrid"></div>
+</div>
+<div class="comm-page" id="commPage" role="dialog" aria-modal="true" aria-labelledby="commTitle">
+  <div class="cat-page-head"><button type="button" class="cat-back" id="commBack" aria-label="Back"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="commTitle">Include some details</h2></div>
+  <div class="comm-body" id="commBody"></div>
+  <div class="comm-foot"><button type="button" class="comm-next" id="commNext">Next</button></div>
+  <div class="comm-dlg" id="commDlg" role="dialog" aria-modal="true"><div class="comm-dlg-box"><div class="comm-dlg-title">For Rent: Shops &amp; Offices</div><div class="comm-dlg-sub" id="commDlgSub"></div><div id="commDlgOpts"></div><div class="comm-dlg-act"><button type="button" id="commDlgCancel">CANCEL</button></div></div></div>
 </div>
 <div class="modal-overlay" id="detailModal">
   <div class="sheet" id="detailSheet"></div>
@@ -2822,10 +2856,103 @@ document.getElementById('catGrid').addEventListener('click', function(e){
   var b = e.target.closest('.cat-cell'); if(!b) return;
   var i = Number(b.getAttribute('data-group'));
   var c = CAT_PICKS[i]; if(!c) return;
+  if(c.label === 'Commercial Space'){ closeCatPage(); openCommPage(); return; }
   if(c.cats.length === 1){ catPostTarget(c.cats[0]); return; }
   var existing = document.querySelector('#catGrid .cat-sub');
   if(existing && existing.previousElementSibling === b){ closeCatSubs(); return; }
   openCatSub(i, b);
+});
+
+// Commercial Space: OLX-style detail form (only for the Commercial Space pick)
+var COMM_FIELDS = [
+  {k:'type', label:'Types', req:true, opts:['Shops','Office space','Warehouse','Other']},
+  {k:'furnishing', label:'Furnishing', req:true, opts:['Furnished','Semi-Furnished','Unfurnished']},
+  {k:'listedBy', label:'Listed by', req:true, opts:['Builder','Dealer','Owner']},
+  {k:'superArea', label:'Super Builtup area sqft *', num:true},
+  {k:'carpetArea', label:'Carpet Area sqft *', num:true},
+  {k:'maintenance', label:'Maintenance (Monthly)', num:true},
+  {k:'carParking', label:'Car Parking', req:true, opts:['0','1','2','3','3+']},
+  {k:'washrooms', label:'Washrooms', num:true},
+  {k:'waterSupply', label:'Water Supply', req:true, opts:['Govt. Water (Tap)','Ground Water (Borewell)','Both Available']},
+  {k:'adTitle', label:'Ad title*', text:true, max:70, ph:'Mention the key features of your item'},
+  {k:'adDesc', label:'Describe what you are selling *', area:true, max:4096, ph:'Include condition, features and reason for selling'}
+];
+var comm = {};
+function escA(v){ return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function renderComm(){
+  document.getElementById('commBody').innerHTML = COMM_FIELDS.map(function(f){
+    var v = comm[f.k] || '', meta = '<div class="cf-meta"><span class="cf-err" data-err="'+f.k+'"></span>'+(f.max?'<span data-count="'+f.k+'">'+v.length+' / '+f.max+'</span>':'')+'</div>';
+    if(f.opts) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><button type="button" class="cf-line" data-pop="'+f.k+'">'+(v?'<span>'+escA(v)+'</span>':'<span class="ph">&nbsp;</span>')+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9.5l6 6 6-6" stroke="#5a5a5a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+meta+'</div>';
+    if(f.area) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><textarea data-in="'+f.k+'" maxlength="'+f.max+'" placeholder="'+escA(f.ph)+'">'+escA(v)+'</textarea>'+meta+'</div>';
+    return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><input data-in="'+f.k+'" '+(f.num?'type="number" inputmode="numeric" min="0"':'type="text" maxlength="'+f.max+'"')+(f.ph?' placeholder="'+escA(f.ph)+'"':'')+' value="'+escA(v)+'">'+meta+'</div>';
+  }).join('');
+}
+function clearCommErr(k){
+  var box = document.querySelector('#commBody [data-cf="'+k+'"]'); if(!box) return;
+  box.classList.remove('err'); var e = box.querySelector('[data-err]'); if(e) e.textContent = '';
+}
+function setCommErr(k, msg){
+  var box = document.querySelector('#commBody [data-cf="'+k+'"]'); if(!box) return;
+  box.classList.add('err'); box.querySelector('[data-err]').textContent = msg || '';
+}
+var commPopKey = null;
+function openCommPop(k){
+  var f = COMM_FIELDS.find(function(x){return x.k===k;}); commPopKey = k;
+  document.getElementById('commDlgSub').textContent = '- ' + f.label;
+  document.getElementById('commDlgOpts').innerHTML = f.opts.map(function(o){ return '<button type="button" class="comm-dlg-opt" data-opt="'+escA(o)+'">'+escA(o)+'</button>'; }).join('');
+  var d = document.getElementById('commDlg'); d.classList.add('open'); requestAnimationFrame(function(){ d.classList.add('show'); });
+}
+function closeCommPop(){
+  var d = document.getElementById('commDlg'); d.classList.remove('show');
+  setTimeout(function(){ d.classList.remove('open'); }, 180); commPopKey = null;
+}
+function openCommPage(){ comm = {}; renderComm(); document.getElementById('commPage').classList.add('open'); document.getElementById('commBody').scrollTop = 0; }
+function closeCommPage(){ document.getElementById('commPage').classList.remove('open'); }
+document.getElementById('commBack').addEventListener('click', closeCommPage);
+document.getElementById('commDlgCancel').addEventListener('click', closeCommPop);
+document.getElementById('commDlg').addEventListener('click', function(e){
+  if(e.target.id === 'commDlg'){ closeCommPop(); return; }
+  var o = e.target.closest('[data-opt]'); if(!o || !commPopKey) return;
+  var k = commPopKey; comm[k] = o.getAttribute('data-opt');
+  var line = document.querySelector('#commBody [data-pop="'+k+'"]');
+  line.firstChild.outerHTML = '<span>'+escA(comm[k])+'</span>';
+  clearCommErr(k); closeCommPop();
+});
+var commBody = document.getElementById('commBody');
+commBody.addEventListener('click', function(e){
+  var b = e.target.closest('[data-pop]'); if(!b) return;
+  var k = b.getAttribute('data-pop'); clearCommErr(k); openCommPop(k);
+});
+commBody.addEventListener('focusin', function(e){ var k = e.target.getAttribute('data-in'); if(k) clearCommErr(k); });
+commBody.addEventListener('input', function(e){
+  var k = e.target.getAttribute('data-in'); if(!k) return;
+  comm[k] = e.target.value; clearCommErr(k);
+  var c = commBody.querySelector('[data-count="'+k+'"]');
+  if(c){ var f = COMM_FIELDS.find(function(x){return x.k===k;}); c.textContent = e.target.value.length+' / '+f.max; }
+});
+function validateComm(){
+  var ok = true, first = null;
+  function bad(k, msg){ ok = false; first = first || k; setCommErr(k, msg); }
+  ['type','furnishing','listedBy','carParking','waterSupply'].forEach(function(k){ if(!comm[k]) bad(k, ''); });
+  var sa = comm.superArea, sn = Number(sa);
+  if(!sa || !(sn >= 0) || sn > 99999999) bad('superArea', 'Super Builtup area sqft has a maximum value of 99999999');
+  var ca = comm.carpetArea, cn = Number(ca);
+  if(!ca || !(cn >= 0)) bad('carpetArea', 'Carpet Area sqft has a minimum value of 0');
+  if((comm.adTitle||'').trim().length < 10) bad('adTitle', 'Title must have a minimum length of 10 characters. Please edit it.');
+  if((comm.adDesc||'').trim().length < 10) bad('adDesc', 'Description must have a minimum length of 10 characters. Please edit it.');
+  if(first){ var n = commBody.querySelector('[data-cf="'+first+'"]'); if(n) n.scrollIntoView({block:'center', behavior:'smooth'}); }
+  return ok;
+}
+document.getElementById('commNext').addEventListener('click', function(){
+  if(!validateComm()) return;
+  var cat = comm.type === 'Shops' ? 'shop' : comm.type === 'Warehouse' ? 'godown' : 'office';
+  var data = Object.assign({}, comm);
+  closeCommPage();
+  catPostTarget(cat);
+  state.comm = data;
+  document.getElementById('pTitle').value = data.adTitle.trim();
+  document.getElementById('pDesc').value = data.adDesc.trim();
+  document.getElementById('pSpecs').style.display = 'none';
 });
 document.getElementById('pCatChange').addEventListener('click', function(){ openCatPage(true); });
 function openPost(){ openCatPage(false); }
@@ -2833,6 +2960,8 @@ document.getElementById('postNavBtn').addEventListener('click', openPost);
 function selectPostCat(cat){
   state.postCat = cat;
   state.specs = {};
+  state.comm = null;
+  document.getElementById('pSpecs').style.display = '';
   document.getElementById('pCatName').textContent = (POST_CATS.find(function(x){return x.id===cat;})||{icon:''}).icon+' '+postCatLabel(cat);
   renderSpecs();
 }
@@ -2843,6 +2972,7 @@ function resetPostForm(){
   selectPostCat('room');
 }
 function collectSpecs(){
+  if(state.comm){ var c = state.comm; return { specs: { commType:c.type, furnish:c.furnishing, listedByType:c.listedBy, superArea:Number(c.superArea), carpetArea:Number(c.carpetArea), maintenance:c.maintenance?Number(c.maintenance):null, carParking:c.carParking, washrooms:c.washrooms?Number(c.washrooms):null, waterSupply:c.waterSupply, sizeSqft:Number(c.superArea) }, missing:null }; }
   var out = {}, missing = null;
   specKeysFor(state.postCat).forEach(function(key){
     if(NUM_SPEC[key]){
