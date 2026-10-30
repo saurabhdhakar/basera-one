@@ -797,6 +797,67 @@ body.chat-list-open .nav-item.active svg{fill:var(--chat-selected);}
 .faq-contact-btn{margin-top:16px;}
 .star{cursor:pointer; color:var(--line); transition:color .1s ease;}
 .star.filled{color:var(--marigold);}
+/* ================= RESPONSIVE LAYER (mobile-first, app-wide) ================= */
+html,body{max-width:100%; overflow-x:hidden;}
+body{min-height:100dvh; overflow-wrap:anywhere;}
+img,video,svg{max-width:100%;}
+img{height:auto;}
+.thumb img,.brand-logo{height:100%;}
+.chat-search-art,.wishlist-art{object-fit:contain;}
+.ad-banner{padding-right:44px;}
+.sheet{max-height:92dvh;}
+.modal-overlay.center .sheet{max-height:88dvh;}
+.modal-overlay.center{padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));}
+.cat-page,.comm-page,.wishlist-screen{height:100dvh;}
+.cat-page-head{padding-top:calc(14px + env(safe-area-inset-top,0px));}
+.comm-body{-webkit-overflow-scrolling:touch; scroll-padding-bottom:96px;}
+.comm-dlg{padding:max(24px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));}
+.comm-dlg-box{max-height:calc(100dvh - 48px); overflow-y:auto;}
+.chip-btn,.tab{min-height:36px;}
+.cf-tabs{flex-wrap:wrap;}
+.sticky-ad{left:max(10px,env(safe-area-inset-left)); right:max(10px,env(safe-area-inset-right));}
+.bottomnav{padding-left:max(4px,env(safe-area-inset-left)); padding-right:max(4px,env(safe-area-inset-right));}
+/* inputs: 16px stops iOS zoom-on-focus so forms stay visible above the keyboard */
+@media (max-width:767px){input,select,textarea{font-size:16px;}}
+/* small phones */
+@media (max-width:360px){
+  .top-row,.search-row{padding-left:10px; padding-right:10px;}
+  .tabs,.filter-strip{padding-left:10px; padding-right:10px;}
+  .brand{font-size:18px;}
+  .tab{padding:8px 12px; font-size:13px;}
+  .grid{padding:0 10px 12px;}
+  .card{gap:10px; padding:8px;}
+  .thumb{width:96px; height:96px;}
+  .ad-banner{margin:12px 10px;}
+  .native-ad{margin:0 10px;}
+  .nav-item{font-size:9.5px;}
+  .comm-body{padding:8px 14px 20px;}
+}
+/* short / landscape screens */
+@media (max-height:500px) and (orientation:landscape){
+  .sheet,.modal-overlay.center .sheet{max-height:96dvh;}
+  .sticky-ad{display:none;}
+  .nav-item.post{top:-8px;}
+}
+/* tablets */
+@media (min-width:768px){
+  .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr));}
+  .grid > .native-ad,.grid > .empty-state,.grid > :only-child{grid-column:1/-1; margin:0;}
+  .thumb{width:140px; height:140px;}
+  .sticky-ad{max-width:720px; margin:0 auto;}
+  .comm-body,.comm-foot > *{width:100%; max-width:720px; margin-left:auto; margin-right:auto;}
+  .cat-grid{max-width:900px; width:100%; margin:0 auto;}
+  .profile-body,.wishlist-list{max-width:760px; margin-left:auto; margin-right:auto;}
+  .modal-overlay:not(.center){align-items:center; padding:24px;}
+  .modal-overlay:not(.center) .sheet{border-radius:16px; max-height:88dvh;}
+}
+/* desktop / laptop */
+@media (min-width:1200px){
+  .top-row,.search-row,.tabs,.section-label,.filter-strip,.grid{max-width:1200px; margin-left:auto; margin-right:auto;}
+  .ad-banner{max-width:1172px; margin:14px auto;}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .bottomnav{max-width:1200px; margin:0 auto; border-left:1px solid var(--line); border-right:1px solid var(--line);}
+}
 </style>
 </head>
 <body>
