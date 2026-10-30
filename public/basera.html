@@ -2883,7 +2883,7 @@ var COMM_FIELDS_COMM = [
   {k:'adDesc', label:'Describe what you are selling *', area:true, max:4096, ph:'Include condition, features and reason for selling'}
 ];
 var HOUSE_FIELDS = [
-  {k:'type', label:'Type *', req:true, opts:['Apartments','Builder Floors','Farm Houses','Houses & Villas']},
+  {k:'type', label:'Type *', req:true, opts:['Flats / Apartments','Independent / Builder Floors','Individual House / Villa','Duplex']},
   {k:'bhk', label:'BHK *', req:true, opts:['1','2','3','4','4+']},
   {k:'furnishing', label:'Furnishing *', req:true, opts:['Furnished','Semi-Furnished','Unfurnished']},
   {k:'listedBy', label:'Listed by *', req:true, opts:['Builder','Dealer','Owner']},
@@ -2975,7 +2975,7 @@ function validateComm(){
 document.getElementById('commNext').addEventListener('click', function(){
   if(!validateComm()) return;
   if(commMode === 'house'){
-    var hcat = (comm.type === 'Apartments' || comm.type === 'Builder Floors') ? 'flat' : 'house';
+    var hcat = (comm.type === 'Flats / Apartments' || comm.type === 'Independent / Builder Floors') ? 'flat' : 'house';
     var hd = Object.assign({}, comm, {mode:'house'});
     closeCommPage(); catPostTarget(hcat); state.comm = hd;
     document.getElementById('pTitle').value = hd.adTitle.trim();
