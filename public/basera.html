@@ -140,6 +140,23 @@ header.top{
 }
 .tab.active{background:var(--marigold); color:var(--indigo);}
 
+
+/* home categories (OLX style, 2 rows) */
+.home-cats{background:#fff; padding:12px 0 6px; border-bottom:1px solid #e6e6e6;}
+.hc-scroll{display:grid; grid-template-rows:repeat(2,auto); grid-auto-flow:column; grid-auto-columns:96px; gap:8px; padding:0 12px 6px; overflow-x:auto; scroll-snap-type:x proximity; scrollbar-width:none;}
+.hc-scroll::-webkit-scrollbar{display:none;}
+.hc-item{display:flex; flex-direction:column; align-items:center; gap:4px; padding:8px 4px; border-radius:10px; background:#fff; border:1px solid #e3e3e3; text-align:center; scroll-snap-align:start; min-height:104px; color:#1a1a1a;}
+.hc-item b{font-size:12px; font-weight:700; color:#1a1a1a; line-height:1.2;}
+.hc-item small,.ac-row small{font-size:10px; font-weight:600; color:#4a4a4a; line-height:1.2; display:block;}
+.hc-ic{display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:#eef4ff; color:#002f34; flex:0 0 auto;}
+.hc-item.active{border-color:#002f34; box-shadow:inset 0 0 0 1px #002f34;}
+.hc-seeall{grid-row:1 / span 2; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; border-radius:10px; border:1.5px solid #002f34; background:#fff; color:#002f34; min-width:88px;}
+.hc-seeall b{font-size:13px; font-weight:800;}
+.hc-arrow{display:inline-flex; width:40px; height:40px; border-radius:50%; background:#002f34; color:#fff; align-items:center; justify-content:center;}
+.ac-body{padding:4px 0 24px;}
+.ac-h{font-size:16px; font-weight:800; color:#111; padding:16px 16px 6px;}
+.ac-row{display:flex; align-items:center; gap:14px; width:100%; padding:10px 16px; border-bottom:1px solid #d9d9d9; background:#fff; text-align:left; color:#111;}
+.ac-row b{font-size:14.5px; font-weight:700; color:#111;}
 /* ---------- AD SLOTS ---------- */
 .ad-label{
   font-size:10px; letter-spacing:.04em; color:var(--muted); font-weight:600;
@@ -902,18 +919,9 @@ img{height:auto;}
     </div>
     <div id="reactHeaderTools"></div>
   </div>
-  <div class="tabs" id="tabs">
-    <button class="tab active" data-cat="all" data-i18n="tab_all">All</button>
-    <button class="tab" data-cat="room" data-i18n="tab_room">🛏 Rooms</button>
-    <button class="tab" data-cat="flat" data-i18n="tab_flat">🏠 Flats</button>
-    <button class="tab" data-cat="hostel" data-i18n="tab_hostel">🏨 Hostel</button>
-    <button class="tab" data-cat="pg" data-i18n="tab_pg">🛌 PG</button>
-    <button class="tab" data-cat="house" data-i18n="tab_house">🏡 Full House</button>
-    <button class="tab" data-cat="office" data-i18n="tab_office">🏢 Office Space</button>
-    <button class="tab" data-cat="shop" data-i18n="tab_shop">🏪 Shop</button>
-    <button class="tab" data-cat="godown" data-i18n="tab_godown">🏭 Godown</button>
-  </div>
 </header>
+
+<section class="home-cats" aria-label="Categories"><div class="hc-scroll" id="homeCats"><button type="button" class="hc-item" data-cat="flat"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3"/></svg></span><b>Flats / Apartments</b></button><button type="button" class="hc-item" data-cat="house"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span><b>Independent House</b></button><button type="button" class="hc-item" data-cat="duplex"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l5-5 5 5"/><path d="M11 8l5-4 5 4"/><path d="M4 9v11h16V8"/><path d="M4 14h16M8 20v-3M16 20v-3"/></svg></span><b>Duplex</b></button><button type="button" class="hc-item" data-cat="room"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 15h18M3 18v2M21 18v2"/><path d="M6 9V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span><b>Rooms</b><small>Single Room / Independent</small></button><button type="button" class="hc-item" data-cat="pg"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M8 11h.01M16 11h.01"/></svg></span><b>PG</b><small>Self-Cook/Tiffin Allowed</small></button><button type="button" class="hc-item" data-cat="hostel"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h8M8 11h8M10 21v-4h4v4"/></svg></span><b>Hostels</b><small>Compulsory Mess/Food</small></button><button type="button" class="hc-item" data-cat="share"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 2 6 5.5"/></svg></span><b>Share Room / Flat</b><small>Find partners to share rent</small></button><button type="button" class="hc-item" data-cat="shop"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l2-5h14l2 5"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/></svg></span><b>Shops</b></button><button type="button" class="hc-item" data-cat="office"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg></span><b>Office Space</b></button><button type="button" class="hc-seeall" id="hcSeeAll"><span class="hc-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15.5M13.5 5.5 20 12l-6.5 6.5"/></svg></span><b>See all</b></button></div></section>
 
 <div class="ad-banner">
   <span class="ad-tag" data-i18n="ad_tag_word">AD</span>
@@ -1031,6 +1039,7 @@ img{height:auto;}
 </div>
 
 <!-- DETAIL MODAL -->
+<div class="cat-page" id="allCatsPage" role="dialog" aria-modal="true" aria-labelledby="allCatsTitle"><div class="cat-page-head"><button type="button" class="cat-back" id="allCatsBack" aria-label="Back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:block"><path d="M20 12H4.5M10.5 5.5 4 12l6.5 6.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="allCatsTitle">All Categories</h2></div><div class="ac-body"><h3 class="ac-h">Residential</h3><button type="button" class="ac-row" data-cat="flat"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3"/></svg></span><span><b>Flats / Apartments</b></span></button><button type="button" class="ac-row" data-cat="house"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg></span><span><b>Independent House</b></span></button><button type="button" class="ac-row" data-cat="duplex"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l5-5 5 5"/><path d="M11 8l5-4 5 4"/><path d="M4 9v11h16V8"/><path d="M4 14h16M8 20v-3M16 20v-3"/></svg></span><span><b>Duplex</b></span></button><button type="button" class="ac-row" data-cat="room"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 15h18M3 18v2M21 18v2"/><path d="M6 9V7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></span><span><b>Rooms</b><small>Single Room / Independent</small></span></button><button type="button" class="ac-row" data-cat="pg"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M8 11h.01M16 11h.01"/></svg></span><span><b>PG</b><small>Self-Cook/Tiffin Allowed</small></span></button><button type="button" class="ac-row" data-cat="hostel"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h8M8 11h8M10 21v-4h4v4"/></svg></span><span><b>Hostels</b><small>Compulsory Mess/Food</small></span></button><button type="button" class="ac-row" data-cat="share"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 14.5c3 0 6 2 6 5.5"/></svg></span><span><b>Share Room / Flat</b><small>Find partners to share rent</small></span></button><h3 class="ac-h">Commercial</h3><button type="button" class="ac-row" data-cat="shop"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l2-5h14l2 5"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8M10 20v-5h4v5"/></svg></span><span><b>Shops</b></span></button><button type="button" class="ac-row" data-cat="office"><span class="hc-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/></svg></span><span><b>Office Space</b></span></button></div></div>
 <div class="cat-page" id="catPage" role="dialog" aria-modal="true" aria-labelledby="catPageTitle">
   <div class="cat-page-head"><button type="button" class="cat-back" id="catBack" aria-label="Back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="display:block"><path d="M20 12H4.5M10.5 5.5 4 12l6.5 6.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2 id="catPageTitle">Categories</h2></div>
   <div class="cat-grid" id="catGrid"></div>
@@ -2816,12 +2825,21 @@ function updateFilterChipLabels(){
 document.getElementById('sortLabel').addEventListener('click', function(){ openFilterModal('sort'); });
 
 /* ---------------- TABS / SEARCH / SORT ---------------- */
-document.getElementById('tabs').addEventListener('click', function(e){
-  var tabEl = e.target.closest('.tab'); if(!tabEl) return;
-  document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
-  tabEl.classList.add('active');
-  state.cat = tabEl.getAttribute('data-cat');
+/* ---------------- HOME CATEGORIES ---------------- */
+function setHomeCat(cat){
+  state.cat = (state.cat === cat) ? 'all' : cat;
+  document.querySelectorAll('.hc-item').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-cat') === state.cat); });
   render();
+}
+document.getElementById('homeCats').addEventListener('click', function(e){
+  if(e.target.closest('#hcSeeAll')){ document.getElementById('allCatsPage').classList.add('open'); return; }
+  var it = e.target.closest('.hc-item'); if(it) setHomeCat(it.getAttribute('data-cat'));
+});
+document.getElementById('allCatsBack').addEventListener('click', function(){ document.getElementById('allCatsPage').classList.remove('open'); });
+document.getElementById('allCatsPage').addEventListener('click', function(e){
+  var r = e.target.closest('.ac-row'); if(!r) return;
+  document.getElementById('allCatsPage').classList.remove('open');
+  state.cat = 'all'; setHomeCat(r.getAttribute('data-cat'));
 });
 var searchTimer;
 document.getElementById('searchInput').addEventListener('input', function(e){
