@@ -1,6 +1,6 @@
 .prehome-auth {
   display: flex;
-  min-height: 100svh;
+  min-height: 100dvh;
   align-items: center;
   justify-content: center;
   overflow-y: auto;
@@ -262,7 +262,7 @@
 
 .prehome-opening {
   display: grid;
-  min-height: 55svh;
+  min-height: 55dvh;
   justify-items: center;
   align-content: center;
   gap: 16px;
@@ -312,7 +312,7 @@
 }
 
 .prehome-splash .prehome-welcome {
-  min-height: calc(100svh - 48px);
+  min-height: calc(100dvh - 48px);
   justify-content: center;
   gap: 24px;
   font-family: Arial, "Noto Sans Devanagari", sans-serif;

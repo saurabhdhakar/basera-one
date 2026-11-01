@@ -1,4 +1,4 @@
-.ola-screen { min-height: 100svh; font-family: Arial, sans-serif; }
+.ola-screen { min-height: 100dvh; font-family: Arial, sans-serif; }
 .ola-screen .loc-panel { padding-bottom: 24px; }
 .ola-screen .loc-header { border-bottom: 1px solid var(--color-border); margin-bottom: 18px; }
 .ola-search { margin: 0 16px; border: 2px solid var(--color-foreground); border-radius: 4px; min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 12px; }
@@ -23,7 +23,7 @@
 .ola-selected > svg { flex-shrink: 0; color: var(--color-brand-green); }
 .ola-selected span { flex: 1; }
 .ola-confirm { flex-shrink: 0; }
-.loc-onboard { --loc-blue: #2978e4; --loc-navy: #0a2760; --loc-muted: #5f6b85; --loc-sky: #e2effd; position: relative; overflow: hidden; min-height: 100svh; display: flex; flex-direction: column; padding: 24px 24px 36px; font-family: 'Poppins', Arial, sans-serif; background: #f6fafe; }
+.loc-onboard { --loc-blue: #2978e4; --loc-navy: #0a2760; --loc-muted: #5f6b85; --loc-sky: #e2effd; position: relative; overflow: hidden; min-height: 100dvh; display: flex; flex-direction: column; padding: 24px 24px 36px; font-family: 'Poppins', Arial, sans-serif; background: #f6fafe; }
 .loc-blob { position: absolute; border-radius: 50%; background: var(--loc-sky); pointer-events: none; }
 .loc-blob-top { width: 215px; height: 215px; top: -90px; right: -85px; }
 .loc-blob-bottom { width: 235px; height: 235px; bottom: -110px; left: -100px; }
@@ -44,3 +44,9 @@
 .loc-onboard-find > svg:last-child { margin-left: auto; }
 .loc-onboard-other { color: var(--loc-blue); font-size: 13.5px; font-weight: 600; gap: 8px; text-decoration: underline; text-underline-offset: 7px; text-decoration-thickness: 2px; }
 .loc-onboard-other svg { width: 16px; height: 16px; }
+.loc-onboard { padding: calc(24px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right)) calc(36px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left)); }
+.loc-onboard-art img { object-fit: contain; }
+@media (max-width: 340px) { .loc-onboard h1 { font-size: 26px; } .loc-onboard-find { width: 100%; } }
+@media (max-height: 600px) { .loc-onboard-art { max-width: 180px; } .loc-onboard-panel { gap: 8px; } }
+@media (max-height: 460px) and (orientation: landscape) { .loc-onboard-art { display: none; } }
+@media (min-width: 768px) { .loc-onboard h1 { max-width: 320px; } .loc-onboard p { max-width: 320px; } .loc-onboard-art { max-width: 320px; } }
