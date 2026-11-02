@@ -69,41 +69,42 @@ a{color:inherit;}
 /* ---------- HEADER ---------- */
 header.top{
   position:sticky; top:0; z-index:40;
-  background:var(--indigo);
+  background:var(--card);
   padding-top:env(safe-area-inset-top,0px);
-  color:#fff;
+  color:var(--text);
 }
 .top-row{
   display:flex; align-items:center; gap:10px;
   padding:12px 14px 8px;
 }
-.brand{font-weight:800; font-size:20px; letter-spacing:-0.02em; color:#fff; display:flex; align-items:center; gap:8px;}
+.brand{font-weight:800; font-size:20px; letter-spacing:-0.02em; color:var(--text); display:flex; align-items:center; gap:8px;}
 .brand-logo{width:30px; height:30px; border-radius:8px; flex:0 0 auto; object-fit:cover;}
 .brand svg{flex:0 0 auto;}
 .brand small{font-family:'Inter'; font-weight:500; font-size:10.5px; color:var(--marigold); display:none; letter-spacing:.02em;}
 .loc-btn{
   margin-left:auto; display:flex; align-items:center; gap:4px;
   background:transparent; border:none;
-  padding:6px 6px; border-radius:8px; color:#fff; font-size:13.5px; font-weight:500;
+  padding:6px 6px; border-radius:8px; color:var(--text); font-size:13.5px; font-weight:500;
   max-width:72vw; min-width:0; flex:0 1 auto;
 }
 .loc-btn svg{flex:0 0 auto; align-self:center;}
 .loc-btn span{overflow:visible; text-overflow:clip; white-space:nowrap; min-width:0;}
-.loc-btn:active{background:rgba(255,255,255,.08);}
+.loc-btn:active{background:rgba(0,0,0,.05);}
 .search-row{padding:0 14px 12px; display:flex; gap:8px; align-items:center;}
 .search-box{
   flex:1; min-width:0; display:flex; align-items:center; gap:8px;
-  background:#fff; border-radius:10px; padding:10px 12px;
+  background:#fff; border:1px solid var(--line); border-radius:10px; padding:9px 12px;
 }
+.search-box:focus-within{border-color:var(--chat-blue);}
 .search-box input{border:none; outline:none; flex:1; min-width:0; font-size:14.5px; color:var(--chat-ink); background:transparent;}
-.search-box svg{flex:0 0 auto; color:var(--muted);}
+.search-box svg{flex:0 0 auto; color:var(--chat-blue);}
 #reactHeaderTools{display:flex; gap:2px; flex-shrink:0;}
 #reactSearchMic{display:flex; flex-shrink:0;}
-.header-tool,.wishlist-back,.wishlist-remove{display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex-shrink:0; border-radius:8px; color:var(--chat-on-action); position:relative; transition:background .12s,transform .12s;}
+.header-tool,.wishlist-back,.wishlist-remove{display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex-shrink:0; border-radius:8px; color:var(--text); position:relative; transition:background .12s,transform .12s;}
 .header-tool svg,.wishlist-back svg,.wishlist-remove svg{width:24px; height:24px; flex-shrink:0;}
-.header-tool:hover{background:var(--header-feedback);}
+.header-tool:hover{background:var(--chat-selected);}
 .header-tool:active,.wishlist-action:active,.wishlist-back:active,.wishlist-remove:active{transform:scale(.94);}
-.search-mic{width:32px; height:32px; color:var(--muted);}
+.search-mic{width:32px; height:32px; color:var(--chat-blue);}
 .search-mic:hover,.wishlist-back:hover,.wishlist-remove:hover{background:var(--chat-selected);}
 .header-tool:focus-visible,.wishlist-back:focus-visible,.wishlist-action:focus-visible,.wishlist-remove:focus-visible{outline:2px solid var(--chat-blue); outline-offset:2px;}
 .favorite-count{position:absolute; top:0; right:0; min-width:16px; height:16px; border-radius:50%; background:var(--danger); color:var(--chat-on-action); font-size:10px; line-height:16px;}
@@ -906,9 +907,9 @@ img{height:auto;}
       <div>Basera<small data-i18n="brand_tag">Rooms & Flats · All India</small></div>
     </div>
     <button class="loc-btn" id="locBtn">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21.5s-7-6.4-7-12A7 7 0 0 1 19 9.5c0 5.6-7 12-7 12z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" stroke="#fff" stroke-width="1.8"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 21.5s-7-6.4-7-12A7 7 0 0 1 19 9.5c0 5.6-7 12-7 12z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" stroke="currentColor" stroke-width="1.8"/></svg>
       <span id="locLabel"></span>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9.5l6 6 6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 9.5l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
   </div>
   <div class="search-row">
