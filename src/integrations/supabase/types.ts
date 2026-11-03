@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      home_banners: {
+        Row: {
+          active: boolean
+          alt: string
+          created_at: string
+          id: string
+          image_url: string
+          link: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          alt?: string
+          created_at?: string
+          id?: string
+          image_url: string
+          link?: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          alt?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          link?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
