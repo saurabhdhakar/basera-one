@@ -1,6 +1,6 @@
 # Basera welcome and sign-in
-- [ ] Implement database-driven home banner images, links, four-second auto-slide, manual swipes and non-interactive dots.
-- [ ] Verify banner interactions and single-image behavior in preview and automated tests.
+- [x] Implement database-driven home banner images, links, four-second auto-slide, manual swipes and non-interactive dots.
+- [x] Verify banner interactions and single-image behavior in preview and automated tests.
 - [x] Make location selection behave like OLX: fill with main locality + city only and auto-advance without a Done step.
 - [x] Connect room address autocomplete and include selected coordinates in the existing listing save payload; live address selection verified.
 - [x] Replace listing map placeholders with secure Ola Tiles maps; live tile/font requests and visible streets/marker verified independently.
