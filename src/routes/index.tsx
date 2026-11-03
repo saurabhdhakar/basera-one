@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { WishlistNavigation } from "@/components/WishlistNavigation";
+import { BannerBridge } from '@/components/BannerBridge';
 import { PreHomeAuth } from "@/components/PreHomeAuth";
 import { LocationSelection } from "@/components/LocationSelection";
 import { RoomLocationBridge } from '@/components/RoomLocationBridge';
@@ -147,7 +148,7 @@ function Marketplace() {
       className="fixed inset-0 h-full w-full border-0"
       onLoad={(event) => setEmbeddedDocument(event.currentTarget.contentDocument)}
     />
-    {embeddedDocument && <><WishlistNavigation document={embeddedDocument} /><RoomLocationBridge document={embeddedDocument} /></>}
+    {embeddedDocument && <><BannerBridge document={embeddedDocument} /><WishlistNavigation document={embeddedDocument} /><RoomLocationBridge document={embeddedDocument} /></>}
     {locationOpen && <div className="fixed inset-0 z-50 overflow-auto bg-background" onKeyDown={e => { if (e.key === 'Escape') closeLocation(); }}><LocationSelection onDone={closeLocation} onSelect={value => { if (value) applyLocation(value); }} /></div>}
     </>
   );

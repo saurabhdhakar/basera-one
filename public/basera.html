@@ -171,6 +171,17 @@ header.top{
 }
 .ad-banner b{font-size:15px; display:block;}
 .ad-banner span{font-size:12px; opacity:.85;}
+.home-banner{margin:14px;max-width:1172px;border-radius:12px;overflow:hidden;background:var(--chat-selected);position:relative;touch-action:pan-y pinch-zoom;}
+.home-banner[hidden],.banner-dots[hidden]{display:none;}
+.banner-track{position:relative;width:100%;aspect-ratio:3/1;overflow:hidden;}
+.banner-slide{position:absolute;inset:0;display:block;transition:transform .35s ease;}
+.banner-slide img{width:100%;height:100%;object-fit:cover;}
+.banner-slide:focus-visible{outline:3px solid var(--chat-blue);outline-offset:-3px;}
+.banner-dots{display:flex;gap:6px;align-items:center;justify-content:center;padding:9px;background:var(--card);pointer-events:none;}
+.banner-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);opacity:.45;}
+.banner-dot.active{background:var(--chat-blue);opacity:1;}
+@media(min-width:1200px){.home-banner{margin:14px auto;}}
+@media(prefers-reduced-motion:reduce){.banner-slide{transition:none;}}
 .ad-tag{
   position:absolute; top:8px; right:10px; font-size:9.5px; font-weight:700;
   background:rgba(0,0,0,.15); padding:2px 6px; border-radius:4px; letter-spacing:.03em;
@@ -924,11 +935,11 @@ img{height:auto;}
 
 <section class="home-cats" aria-label="Categories"><div class="hc-scroll" id="homeCats"><button type="button" class="hc-item" data-cat="flat" style="background:#e2f4f6"><span class="hc-ic"><img src="/assets/cats/flat.png" alt="" loading="lazy"></span><b>Flats / Apartments</b></button><button type="button" class="hc-item" data-cat="house" style="background:#fdf7e6"><span class="hc-ic"><img src="/assets/cats/house.png" alt="" loading="lazy"></span><b>Independent House</b></button><button type="button" class="hc-item" data-cat="duplex" style="background:#edf2fb"><span class="hc-ic"><img src="/assets/cats/duplex.png" alt="" loading="lazy"></span><b>Duplex</b></button><button type="button" class="hc-item" data-cat="room" style="background:#eaf0fd"><span class="hc-ic"><img src="/assets/cats/room.png" alt="" loading="lazy"></span><b>Rooms</b><small>Single Room / Independent</small></button><button type="button" class="hc-item" data-cat="pg" style="background:#fdeee1"><span class="hc-ic"><img src="/assets/cats/pg.png" alt="" loading="lazy"></span><b>PG</b><small>Self-Cook/Tiffin Allowed</small></button><button type="button" class="hc-item" data-cat="hostel" style="background:#f5f1f6"><span class="hc-ic"><img src="/assets/cats/hostel.png" alt="" loading="lazy"></span><b>Hostels</b><small>Compulsory Mess/Food</small></button><button type="button" class="hc-item" data-cat="share" style="background:#fdf2dd"><span class="hc-ic"><img src="/assets/cats/share.png" alt="" loading="lazy"></span><b>Share Room / Flat</b><small>Find partners to share rent</small></button><button type="button" class="hc-item" data-cat="shop" style="background:#f0f3fb"><span class="hc-ic"><img src="/assets/cats/shop.png" alt="" loading="lazy"></span><b>Shops</b></button><button type="button" class="hc-item" data-cat="office" style="background:#eaf0fd"><span class="hc-ic"><img src="/assets/cats/office.jpg" alt="" loading="lazy"></span><b>Office Space</b></button><button type="button" class="hc-item" data-cat="godown" style="background:#fdf2e1"><span class="hc-ic"><img src="/assets/cats/warehouse.jpg" alt="" loading="lazy"></span><b>Warehouse</b></button></div></section>
 
-<div class="ad-banner">
-  <span class="ad-tag" data-i18n="ad_tag_word">AD</span>
-  <b data-i18n="ad_title">Grow your business — advertise on Basera</b>
-  <span data-i18n="ad_sub">Reach lakhs of home-seekers across India. Basera is 100% free for users — we run on ads, not subscriptions.</span>
-</div>
+<section class="home-banner" id="homeBanner" aria-label="Featured banners" aria-roledescription="carousel">
+  <div class="banner-track"></div>
+  <div class="banner-dots" aria-hidden="true" hidden></div>
+</section>
+<script type="module" src="/banner-slider.js"></script>
 
 <div class="section-label">
   <span id="resultCount">Showing listings</span>
