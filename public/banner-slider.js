@@ -10,19 +10,19 @@ export function safeBannerUrl(value, image = false) {
   } catch { return ''; }
 }
 
-export function createBannerSlider(root, { fallback = [], interval = AUTO_SLIDE_MS } = {}) {
+export function createBannerSlider(root, { interval = AUTO_SLIDE_MS, emptyState = 'hide' } = {}) {
   const doc = root.ownerDocument;
   const win = doc.defaultView;
   const track = root.querySelector('.banner-track');
   const dots = root.querySelector('.banner-dots');
   if (!track || !dots || !win) return null;
-  let banners = [], index = 0, timer = null, start = null, suppressClick = false;
+  let banners = null, index = 0, timer = null, start = null, suppressClick = false;
   let hovering = false, focused = false, intersecting = true;
   const reduced = win.matchMedia?.('(prefers-reduced-motion: reduce)');
   const clear = () => { if (timer !== null) win.clearInterval(timer); timer = null; };
   const restart = () => {
     clear();
-    if (banners.length > 1 && !doc.hidden && !hovering && !focused && intersecting && !reduced?.matches) {
+    if (banners && banners.length > 1 && !doc.hidden && !hovering && !focused && intersecting && !reduced?.matches) {
       timer = win.setInterval(() => go(index + 1), interval);
     }
   };
@@ -37,12 +37,25 @@ export function createBannerSlider(root, { fallback = [], interval = AUTO_SLIDE_
     root.dataset.index = String(index);
   }
   function update(rows) {
-    const valid = (Array.isArray(rows) ? rows : []).filter(row => row && row.active !== false && safeBannerUrl(row.image_url, true));
-    const next = valid.length ? valid : fallback;
+    const next = (Array.isArray(rows) ? rows : []).filter(row => row && row.active !== false && safeBannerUrl(row.image_url, true));
     if (JSON.stringify(banners) === JSON.stringify(next)) return;
     banners = next;
     clear(); track.replaceChildren(); dots.replaceChildren(); index = 0;
-    root.hidden = !banners.length;
+    root.dataset.index = '';
+    if (!banners.length) {
+      dots.hidden = true;
+      if (emptyState === 'placeholder') {
+        root.hidden = false;
+        const note = doc.createElement('div');
+        note.className = 'banner-empty';
+        note.textContent = 'Banner Section (Ready for Admin Upload)';
+        track.append(note);
+      } else {
+        root.hidden = true;
+      }
+      return;
+    }
+    root.hidden = false;
     banners.forEach((banner, i) => {
       const link = safeBannerUrl(banner.link);
       const slide = doc.createElement(link ? 'a' : 'div');
@@ -53,12 +66,11 @@ export function createBannerSlider(root, { fallback = [], interval = AUTO_SLIDE_
       image.src = safeBannerUrl(banner.image_url, true); image.alt = banner.alt || 'Basera banner';
       image.width = 1536; image.height = 512; image.draggable = false;
       image.loading = i === 0 ? 'eager' : 'lazy';
-      image.addEventListener('error', () => { if (!image.src.endsWith('/assets/home-banner.jpg')) image.src = '/assets/home-banner.jpg'; });
       slide.append(image); track.append(slide);
       const dot = doc.createElement('span'); dot.className = 'banner-dot'; dots.append(dot);
     });
     dots.hidden = banners.length <= 1;
-    if (banners.length) go(0);
+    go(0);
     restart();
   }
   const handlers = [];
@@ -90,13 +102,13 @@ export function createBannerSlider(root, { fallback = [], interval = AUTO_SLIDE_
   if (reduced) on(reduced, 'change', restart);
   const observer = win.IntersectionObserver ? new win.IntersectionObserver(entries => { intersecting = entries[0].isIntersecting; restart(); }) : null;
   observer?.observe(root);
-  update(fallback);
+  update([]);
   return { update, getIndex: () => index, destroy: () => { clear(); observer?.disconnect(); handlers.forEach(remove => remove()); } };
 }
 
 const root = document.getElementById('homeBanner');
 if (root) {
-  const slider = createBannerSlider(root, { fallback: [{ image_url: '/assets/home-banner.jpg', link: '', alt: 'Find your next space with Basera' }] });
+  const slider = createBannerSlider(root, { emptyState: 'placeholder' });
   document.addEventListener('basera-banners-updated', event => slider?.update(event.detail));
   window.addEventListener('pagehide', () => slider?.destroy(), { once: true });
   document.dispatchEvent(new CustomEvent('basera-banners-ready'));

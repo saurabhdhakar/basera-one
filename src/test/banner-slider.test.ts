@@ -63,4 +63,22 @@ describe('home banner rules', () => {
     slider.update(banners.slice(0, 1));
     expect(slider.getIndex()).toBe(0); expect(vi.getTimerCount()).toBe(0);
   });
+  it('hides the whole container and renders no images when the database has no banners', () => {
+    slider.update(banners); vi.advanceTimersByTime(4000);
+    slider.update([]);
+    expect(root.hidden).toBe(true);
+    expect(root.querySelector('img')).toBeNull();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+  it('shows a placeholder box with no embedded image for an empty database when configured', () => {
+    document.body.insertAdjacentHTML('beforeend', '<section id="ph"><div class="banner-track"></div><div class="banner-dots"></div></section>');
+    const phRoot = document.getElementById('ph') as HTMLElement;
+    const ph = createBannerSlider(phRoot, { emptyState: 'placeholder' });
+    ph.update([]);
+    expect(phRoot.hidden).toBe(false);
+    expect(phRoot.querySelector('img')).toBeNull();
+    expect(phRoot.textContent).toContain('Banner Section (Ready for Admin Upload)');
+    ph.destroy();
+    phRoot.remove();
+  });
 });

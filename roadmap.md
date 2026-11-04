@@ -1,5 +1,6 @@
 # Basera welcome and sign-in
 - [x] Implement database-driven home banner images, links, four-second auto-slide, manual swipes and non-interactive dots.
+- [x] Remove all hardcoded banner images from code; empty database hides the banner (dev placeholder box in the marketplace) until admin uploads banners.
 - [x] Verify banner interactions and single-image behavior in preview and automated tests.
 - [x] Make location selection behave like OLX: fill with main locality + city only and auto-advance without a Done step.
 - [x] Connect room address autocomplete and include selected coordinates in the existing listing save payload; live address selection verified.
