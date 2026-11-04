@@ -44,15 +44,7 @@ export function createBannerSlider(root, { interval = AUTO_SLIDE_MS, emptyState 
     root.dataset.index = '';
     if (!banners.length) {
       dots.hidden = true;
-      if (emptyState === 'placeholder') {
-        root.hidden = false;
-        const note = doc.createElement('div');
-        note.className = 'banner-empty';
-        note.textContent = 'Banner Section (Ready for Admin Upload)';
-        track.append(note);
-      } else {
-        root.hidden = true;
-      }
+      root.hidden = true;
       return;
     }
     root.hidden = false;
@@ -108,7 +100,7 @@ export function createBannerSlider(root, { interval = AUTO_SLIDE_MS, emptyState 
 
 const root = document.getElementById('homeBanner');
 if (root) {
-  const slider = createBannerSlider(root, { emptyState: 'placeholder' });
+  const slider = createBannerSlider(root);
   document.addEventListener('basera-banners-updated', event => slider?.update(event.detail));
   window.addEventListener('pagehide', () => slider?.destroy(), { once: true });
   document.dispatchEvent(new CustomEvent('basera-banners-ready'));
