@@ -16,13 +16,13 @@ export function createBannerSlider(root, { interval = AUTO_SLIDE_MS, emptyState 
   const track = root.querySelector('.banner-track');
   const dots = root.querySelector('.banner-dots');
   if (!track || !dots || !win) return null;
-  let banners = [], index = 0, timer = null, start = null, suppressClick = false;
+  let banners = null, index = 0, timer = null, start = null, suppressClick = false;
   let hovering = false, focused = false, intersecting = true;
   const reduced = win.matchMedia?.('(prefers-reduced-motion: reduce)');
   const clear = () => { if (timer !== null) win.clearInterval(timer); timer = null; };
   const restart = () => {
     clear();
-    if (banners.length > 1 && !doc.hidden && !hovering && !focused && intersecting && !reduced?.matches) {
+    if (banners && banners.length > 1 && !doc.hidden && !hovering && !focused && intersecting && !reduced?.matches) {
       timer = win.setInterval(() => go(index + 1), interval);
     }
   };
