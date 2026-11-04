@@ -171,7 +171,7 @@ header.top{
 }
 .ad-banner b{font-size:15px; display:block;}
 .ad-banner span{font-size:12px; opacity:.85;}
-.home-banner{margin:14px;max-width:1172px;border-radius:12px;overflow:hidden;background:var(--chat-selected);position:relative;touch-action:pan-y pinch-zoom;}
+.home-banner{margin:14px;max-width:1172px;border-radius:12px;overflow:hidden;position:relative;touch-action:pan-y pinch-zoom;}
 .home-banner[hidden],.banner-dots[hidden]{display:none;}
 .banner-track{position:relative;width:100%;aspect-ratio:3/1;overflow:hidden;}
 .banner-slide{position:absolute;inset:0;display:block;transition:transform .35s ease;}
@@ -180,7 +180,6 @@ header.top{
  .banner-dots{display:flex;gap:6px;align-items:center;justify-content:center;padding:9px;background:var(--card);pointer-events:none;}
 .banner-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);opacity:.45;}
 .banner-dot.active{background:var(--chat-blue);opacity:1;}
-.banner-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#f1f3f5;border:1px dashed #c6ced4;color:#5a6b73;font-size:13px;font-weight:600;text-align:center;padding:0 16px;}
 @media(min-width:1200px){.home-banner{margin:14px auto;}}
 @media(prefers-reduced-motion:reduce){.banner-slide{transition:none;}}
 .ad-tag{
@@ -934,7 +933,7 @@ img{height:auto;}
   </div>
 </header>
 
-<section class="home-banner" id="homeBanner" aria-label="Featured banners" aria-roledescription="carousel">
+<section class="home-banner" id="homeBanner" aria-label="Featured banners" aria-roledescription="carousel" hidden>
   <div class="banner-track"></div>
   <div class="banner-dots" aria-hidden="true" hidden></div>
 </section>

@@ -70,15 +70,13 @@ describe('home banner rules', () => {
     expect(root.querySelector('img')).toBeNull();
     expect(vi.getTimerCount()).toBe(0);
   });
-  it('shows a placeholder box with no embedded image for an empty database when configured', () => {
-    document.body.insertAdjacentHTML('beforeend', '<section id="ph"><div class="banner-track"></div><div class="banner-dots"></div></section>');
-    const phRoot = document.getElementById('ph') as HTMLElement;
-    const ph = createBannerSlider(phRoot, { emptyState: 'placeholder' });
-    ph.update([]);
-    expect(phRoot.hidden).toBe(false);
-    expect(phRoot.querySelector('img')).toBeNull();
-    expect(phRoot.textContent).toContain('Banner Section (Ready for Admin Upload)');
-    ph.destroy();
-    phRoot.remove();
+  it('stays hidden with no text or image while empty, then shows and loops when banners arrive', () => {
+    expect(root.hidden).toBe(true);
+    expect(root.textContent).toBe('');
+    slider.update(banners.slice(0, 2));
+    expect(root.hidden).toBe(false);
+    expect(root.querySelectorAll('img').length).toBe(2);
+    vi.advanceTimersByTime(4000); expect(slider.getIndex()).toBe(1);
+    vi.advanceTimersByTime(4000); expect(slider.getIndex()).toBe(0);
   });
 });
