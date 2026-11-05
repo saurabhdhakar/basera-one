@@ -21,3 +21,4 @@
 - Render property maps with dynamically imported MapLibre and an allowlisted same-origin Ola vector resource proxy; rewrite style/TileJSON resources so fonts, sprites and tiles never expose credentials.
 - Use RoomLocationBridge portals and document events for embedded room form and detail maps; persist selected address and coordinates with each listing, never substitute viewer or city-centre coordinates.
 - Home banners use public read-only Cloud home_banners rows and BannerBridge document events; keep the reusable browser carousel in public/banner-slider.js so banner updates do not depend on legacy Firebase configuration or change other ad units.
+- Keep property details presentation scoped to the embedded marketplace with browser-safe property data helpers; preserve RoomLocationBridge map events and existing call/chat handlers so redesigns do not alter session or contact rules.
