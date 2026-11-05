@@ -21,7 +21,9 @@ export function RoomLocationBridge({ document: doc }: { document: Document }) {
       const value = (event as CustomEvent<{ location?: SelectedLocation; latitude?: number; longitude?: number; address?: string; locality?: string; city?: string; state?: string }>).detail;
       const saved = value?.location || value;
       const normalized = normalizeOlaPlace({ formatted_address: saved?.address || [value?.locality, value?.city].filter(Boolean).join(', '), geometry: { location: { lat: saved?.latitude, lng: saved?.longitude } } });
-      setMapLocation(normalized); setMapTarget(doc.getElementById('roomPropertyMap'));
+      const target = doc.getElementById('roomPropertyMap');
+      target?.querySelector('.detail-map-empty')?.remove();
+      setMapLocation(normalized); setMapTarget(target);
     };
     const close = () => setMapTarget(null);
     doc.addEventListener('basera-post-reset', reset);
