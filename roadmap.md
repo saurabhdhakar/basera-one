@@ -1,4 +1,5 @@
 # Basera welcome and sign-in
+- [ ] Redesign property details with photo slider, rent/deposit, amenities, owner profile and fixed contact actions; verify mobile and desktop.
 - [x] Implement database-driven home banner images, links, four-second auto-slide, manual swipes and non-interactive dots.
 - [x] Remove all hardcoded banner images from code; empty database hides the banner (dev placeholder box in the marketplace) until admin uploads banners.
 - [x] Verify banner interactions and single-image behavior in preview and automated tests.
