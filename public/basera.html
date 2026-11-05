@@ -908,6 +908,7 @@ img{height:auto;}
 .cf.err .cf-line,.cf.err input{border-bottom-color:#d93025}
 .field input:focus,.cf input:focus,.cf .cf-line:focus{border-bottom-color:#2978e4}
 </style>
+<link rel="stylesheet" href="/property-details.css">
 </head>
 <body>
 
@@ -1064,7 +1065,7 @@ img{height:auto;}
   <div class="comm-dlg" id="commDlg" role="dialog" aria-modal="true"><div class="comm-dlg-box"><div class="comm-dlg-title" id="commDlgTitle">For Rent: Shops &amp; Offices</div><div class="comm-dlg-sub" id="commDlgSub"></div><div id="commDlgOpts"></div><div class="comm-dlg-act"><button type="button" id="commDlgCancel">CANCEL</button></div></div></div>
 </div>
 <div class="modal-overlay" id="detailModal">
-  <div class="sheet" id="detailSheet"></div>
+  <div class="sheet" id="detailSheet" role="dialog" aria-modal="true" aria-labelledby="propertyDetailTitle" tabindex="-1"></div>
 </div>
 
 <!-- PROFILE SCREEN -->
@@ -1447,6 +1448,7 @@ img{height:auto;}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
+<script src="/property-details.js"></script>
 <script>
 (function(){
 "use strict";
@@ -3271,16 +3273,13 @@ document.getElementById('grid').addEventListener('click', function(e){
 });
 
 function openDetail(l){
-  var photos = (l.photos && l.photos.length) ? l.photos : null;
-  var count = photos ? photos.length : 1;
-  var gallery;
-  if(photos){
-    gallery = photos.map(function(p){return '<div class="g-img"><img src="'+p+'"></div>';}).join('');
-  }else{
-    gallery = '<div class="g-img" style="background:linear-gradient(135deg,'+l.gradient[0]+','+l.gradient[1]+');display:flex;align-items:center;justify-content:center;">'+houseIconSVG()+'</div>';
-  }
-  var ownerName = l.ownerName || l.owner || '';
-  var initials = (ownerName||'?').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  var detail = window.BaseraPropertyDetails;
+  var data = detail.model(l), e = detail.escape, ic = detail.icon;
+  var photos = data.photos.length ? data.photos : null;
+  var count = photos ? photos.length : 0;
+  var gallery = photos ? photos.map(function(p,i){return '<div class="g-img"><img src="'+e(p)+'" alt="'+e(l.title||'Property')+' — photo '+(i+1)+'" '+(i?'loading="lazy"':'')+' draggable="false"></div>';}).join('') : '<div class="g-img photo-empty">'+ic('camera')+'<span>Photos not added yet</span></div>';
+  var ownerName = l.ownerName || l.owner || 'Owner';
+  var initials = ownerName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
   var postedDateStr = formatPostedDateLong(l);
 
   var similar = ALL.filter(function(x){
@@ -3299,105 +3298,35 @@ function openDetail(l){
   if(l.projectName) pinfoRows.push([t('pinfo_project_name'), l.projectName]);
   if(l.bath != null && l.bath !== '') pinfoRows.push([t('pinfo_washrooms'), l.bath]);
 
-  var html = ''+
+  var html = '<div class="detail-content">'+
   '<div class="gallery-wrap">'+
-    '<span class="gallery-float-btn back" data-close="detailModal">←</span>'+
-    '<span class="gallery-float-btn share" id="shareAdBtn">⤴</span>'+
-    '<div class="detail-gallery" id="detailGallery">'+gallery+'</div>'+
-    (count>1 ? '<div class="gallery-counter" id="galleryCounter">1/'+count+'</div>' : '')+
-    (count>1 ? '<div class="gallery-dots" id="galleryDots">'+Array.from({length:count}).map(function(_,i){return '<span class="'+(i===0?'on':'')+'"></span>';}).join('')+'</div>' : '')+
+    '<button type="button" class="gallery-float-btn back" data-close="detailModal" aria-label="Back">'+ic('back')+'</button>'+
+    '<button type="button" class="gallery-float-btn share" id="shareAdBtn" aria-label="Share property">'+ic('share')+'</button>'+
+    '<div class="detail-gallery" id="detailGallery" aria-label="Property photos" tabindex="0">'+gallery+'</div>'+
+    (count ? '<div class="gallery-counter" id="galleryCounter" role="status" aria-label="Photo count">1/'+count+'</div>' : '')+
+    (count>1 ? '<div class="gallery-dots" id="galleryDots" aria-hidden="true">'+photos.map(function(_,i){return '<span class="'+(i===0?'on':'')+'"></span>';}).join('')+'</div>' : '')+
   '</div>'+
-
-  '<div class="elite-price-card">'+
-    '<div class="epc-top">'+
-      (l.eliteSeller === true ? '<span class="elite-badge-chip">👑 '+t('elite_seller_chip')+'</span>' : '<span></span>')+
-      '<span class="epc-heart" data-heart-detail="'+l.id+'">♡</span>'+
-    '</div>'+
-    '<div class="epc-title">'+(l.title||'')+'</div>'+
-    '<div class="epc-price-row">'+
-      '<div class="epc-price">'+fmtPrice(l.price)+'</div>'+
-      (postedDateStr ? '<div class="epc-posted">'+t('posted_on_label')+'<br>'+postedDateStr+'</div>' : '<div></div>')+
-    '</div>'+
-    '<div class="epc-loc">📍 '+[l.locality,l.city].filter(Boolean).join(', ')+'</div>'+
-  '</div>'+
-  specTagsHTML(l)+
-
-  (pinfoRows.length ? (
-    '<div class="pinfo-card" id="pinfoCard">'+
-      '<div class="pinfo-head" id="pinfoToggle"><span>'+t('pinfo_title')+'</span><span class="chev">▲</span></div>'+
-      '<div class="pinfo-body">'+
-        pinfoRows.map(function(r){ return '<div class="pinfo-row"><span>'+r[0]+'</span><span>'+r[1]+'</span></div>'; }).join('')+
-      '</div>'+
-    '</div>'
-  ) : '')+
-
-  (l.desc ? '<div class="desc-card"><h4>'+t('detail_head')+'</h4><hr><p>'+l.desc+'</p></div>' : '')+
-
-  (photos ? (
-    '<div class="gallery-section"><h4>'+t('gallery_label')+'</h4>'+
-      '<div class="gallery-grid">'+photos.slice(0,4).map(function(p){return '<img src="'+p+'">';}).join('')+'</div>'+
-      '<div class="request-images-row" id="requestImagesBtn">📷 '+t('request_more_images')+' ›</div>'+
-    '</div>'
-  ) : '')+
-
-  '<div class="ad-banner" style="margin:14px 16px;"><span class="ad-tag">'+t('ad_tag_word')+'</span><b>'+t('verified_users_banner')+'</b><span id="notVerifiedLink" style="text-decoration:underline; cursor:pointer;">'+t('not_verified_link')+' ›</span></div>'+
-
-  '<div class="seller-card">'+
-    '<div class="sc-top">'+
-      '<div class="sc-avatar">'+initials+'</div>'+
-      '<div>'+(l.listedBy==='dealer' ? '<div style="font-size:10.5px; color:var(--muted); margin-bottom:2px;">'+t('seller_registered_label')+'</div>' : '')+
-        '<div class="sc-name">'+ownerName+'</div>'+
-        (l.verified === true ? '<span class="badge-verified" style="display:inline-flex; margin:0 6px 0 0;">✓ '+t('id_verified')+'</span>' : '')+
-        (l.eliteSeller === true ? '<span class="sc-elite-badge">👑 '+t('elite_seller_chip')+'</span>' : '')+
-      '</div>'+
-    '</div>'+
-    ((l.memberSinceYear || l.itemsListed) ? (
-      '<div class="sc-stats">'+
-        (l.memberSinceYear ? '<div><b>'+l.memberSinceYear+'</b><span>'+t('member_since_label')+'</span></div>' : '')+
-        ((l.memberSinceYear && l.itemsListed) ? '<div class="divider"></div>' : '')+
-        (l.itemsListed ? '<div><b>'+l.itemsListed+'</b><span>'+t('items_listed_label')+'</span></div>' : '')+
-      '</div>'
-    ) : '')+
-    '<div class="sc-link" id="viewSellerProfileLink"><span>'+t('view_seller_profile')+'</span><span>›</span></div>'+
-  '</div>'+
-
-  '<div class="similar-cta"><div><b>'+t('similar_item_title')+'</b></div><button class="sc-btn" id="sellForFreeBtn">'+t('sell_for_free_btn')+'</button></div>'+
-
-  '<div class="map-card"><h4>Property location</h4><div id="roomPropertyMap"></div></div>'+
-
-  '<div class="adid-row"><span>'+t('ad_id_label')+': '+l.id+'</span><button class="report-ad-btn" id="reportAdLink">'+t('report_ad_btn')+'</button></div>'+
-
-  (l.eliteSeller === true ? '<div class="elite-call-banner">📞 '+t('elite_call_banner_text')+'</div>' : '')+
-
-  '<div class="safety-card">'+
-    '<div class="sc-head">🛡️ '+t('safety_tips_title')+'</div>'+
-    '<ul>'+
-      '<li>'+t('safety_tip1')+'</li>'+
-      '<li>'+t('safety_tip2')+'</li>'+
-      '<li>'+t('safety_tip3')+'</li>'+
-      '<li>'+t('safety_tip4')+'</li>'+
-      '<li>'+t('safety_tip5')+'</li>'+
-    '</ul>'+
-  '</div>'+
-
-  (similar.length ? (
-    '<div class="similar-rail-label">'+t('similar_ads_label')+'</div>'+
-    '<div class="similar-rail" id="similarRail">'+
-      similar.map(function(s){
-        var sThumb = (s.photos && s.photos.length)
-          ? '<img src="'+s.photos[0]+'">'
-          : '<div style="width:100%;height:100%;background:linear-gradient(135deg,'+s.gradient[0]+','+s.gradient[1]+');display:flex;align-items:center;justify-content:center;">'+houseIconSVG()+'</div>';
-        return '<div class="similar-card" data-sid="'+s.id+'">'+
-          '<div class="sc-thumb">'+sThumb+'</div>'+
-          '<div class="sc-body"><div class="sc-price">'+fmtPrice(s.price)+'</div><div class="sc-title">'+[s.locality,s.city].filter(Boolean).join(', ')+'</div></div>'+
-        '</div>';
-      }).join('')+
-    '</div>'
-  ) : '')+
-
-  '<div class="detail-cta">'+
-    '<button class="btn outline" id="chatWithOwnerBtn" style="flex:1;">💬 '+t('chat_word')+'</button>'+
-    (l.phone ? '<button class="btn dark" id="callOwnerBtn" data-phone="'+l.phone+'" style="flex:1;">📞 '+t('call_owner')+'</button>' : '')+
+  '<section class="detail-section">'+
+    '<div class="detail-rent-row"><div class="detail-rent">'+fmtPrice(l.price)+' <small>'+t('per_month')+'</small></div><button type="button" class="epc-heart" data-heart-detail="'+e(l.id)+'" aria-label="Save property" aria-pressed="false">♡</button></div>'+
+    '<div class="detail-deposit">Security deposit · <strong>'+(data.deposit!==null ? fmtPrice(data.deposit) : 'Not specified')+'</strong></div>'+
+    '<h1 class="detail-title" id="propertyDetailTitle">'+e(l.title)+'</h1>'+
+    '<div class="detail-address">'+ic('pin')+'<span>'+e(l.address || l.location && l.location.address || [l.locality,l.city].filter(Boolean).join(', '))+'</span></div>'+
+    (postedDateStr ? '<div class="detail-posted">'+e(t('posted_on_label'))+' '+e(postedDateStr)+'</div>' : '')+
+    '<div id="roomPropertyMap"><div class="detail-map-empty">'+ic('pin')+'<span>Property location'+(!l.location && !Number.isFinite(l.latitude) ? ' · Exact location not provided' : '')+'</span></div></div>'+
+  '</section>'+
+  '<section class="detail-section"><h2>Amenities</h2><div class="amenity-grid">'+data.amenities.map(function(item){return '<div class="amenity-item">'+ic(item.icon)+'<div><b>'+e(item.label)+'</b><small>'+e(item.status)+'</small></div></div>';}).join('')+'</div></section>'+
+  (pinfoRows.length ? '<section class="detail-section"><h2>Property details</h2><dl class="detail-facts">'+pinfoRows.map(function(r){return '<div><dt>'+e(r[0])+'</dt><dd>'+e(r[1])+'</dd></div>';}).join('')+'</dl></section>' : '')+
+  (l.desc ? '<section class="detail-section"><h2>About this property</h2><p class="detail-description">'+e(l.desc)+'</p></section>' : '')+
+  '<section class="detail-section"><h2>'+(l.listedBy==='dealer'?'Listed by':'Meet your landlord')+'</h2><div class="landlord-profile">'+
+    '<div class="owner-avatar">'+(data.avatar?'<img src="'+e(data.avatar)+'" alt="'+e(ownerName)+'">':e(initials))+'</div>'+
+    '<div><div class="owner-name">'+e(ownerName)+'</div><div class="owner-role">'+(l.listedBy==='dealer'?e(t('listed_by_dealer')):'Property owner')+'</div>'+
+      (data.verified ? '<span class="owner-verified">'+ic('check')+e(t('id_verified'))+'</span>' : '')+'</div></div>'+
+    (l.memberSinceYear ? '<div class="detail-owner-meta">'+e(t('member_since_label'))+' '+e(l.memberSinceYear)+'</div>' : '')+
+  '</section>'+
+  '<div class="adid-row"><span>'+e(t('ad_id_label'))+': '+e(l.id)+'</span><button type="button" class="report-ad-btn" id="reportAdLink">'+e(t('report_ad_btn'))+'</button></div>'+
+  '</div><div class="detail-cta">'+
+    '<button type="button" class="btn detail-chat" id="chatWithOwnerBtn">'+ic('chat')+'<span>Chat on Basera</span></button>'+
+    '<button type="button" class="btn detail-call" id="callOwnerBtn" data-phone="'+e(l.phone||'')+'" '+(!l.phone?'disabled title="Owner phone number not provided"':'')+'>'+ic('call')+'<span>'+e(t('call_owner'))+'</span></button>'+
   '</div>';
 
   document.getElementById('detailSheet').innerHTML = html;
@@ -3405,14 +3334,15 @@ function openDetail(l){
     el.addEventListener('click', function(){ closeModal('detailModal'); });
   });
   var callBtn = document.getElementById('callOwnerBtn');
-  if(callBtn) callBtn.addEventListener('click', function(){ handleCallOwner(callBtn.getAttribute('data-phone')); });
+  if(callBtn && l.phone) callBtn.addEventListener('click', function(){ handleCallOwner(callBtn.getAttribute('data-phone')); });
   var chatBtn = document.getElementById('chatWithOwnerBtn');
   if(chatBtn) chatBtn.addEventListener('click', function(){ openChatFromListing(l); });
 
   if(count>1){
     var galleryEl = document.getElementById('detailGallery');
+    galleryEl.addEventListener('keydown', function(event){ if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault(); galleryEl.scrollBy({left:galleryEl.clientWidth*(event.key==='ArrowRight'?1:-1),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});} });
     galleryEl.addEventListener('scroll', function(){
-      var idx = Math.round(galleryEl.scrollLeft / galleryEl.clientWidth);
+      var idx = Math.max(0, Math.min(count-1, Math.round(galleryEl.scrollLeft / Math.max(1,galleryEl.clientWidth))));
       document.getElementById('galleryCounter').textContent = (idx+1)+'/'+count;
       document.querySelectorAll('#galleryDots span').forEach(function(d,i){ d.classList.toggle('on', i===idx); });
     });
@@ -3421,6 +3351,7 @@ function openDetail(l){
   var heartBtn = document.querySelector('[data-heart-detail]');
   if(heartBtn) heartBtn.addEventListener('click', function(){
     heartBtn.classList.toggle('on');
+    heartBtn.setAttribute('aria-pressed',String(heartBtn.classList.contains('on')));
     heartBtn.textContent = heartBtn.classList.contains('on') ? '♥' : '♡';
     heartBtn.style.color = heartBtn.classList.contains('on') ? 'var(--danger)' : '';
   });
@@ -3465,6 +3396,7 @@ function openDetail(l){
   }
 
   openModal('detailModal');
+  document.getElementById('detailSheet').focus({preventScroll:true});
   document.dispatchEvent(new CustomEvent('basera-property-map', {detail:l}));
 }
 
