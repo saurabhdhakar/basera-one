@@ -907,6 +907,27 @@ img{height:auto;}
 .cf.err label{color:#d93025!important}
 .cf.err .cf-line,.cf.err input{border-bottom-color:#d93025}
 .field input:focus,.cf input:focus,.cf .cf-line:focus{border-bottom-color:#2978e4}
+/* Room details: reference layout, scoped independently of other categories. */
+#commPage.room-mode{background:var(--chat-surface);color:var(--chat-ink)}
+#commPage.room-mode .cat-page-head{background:var(--chat-surface);border-bottom:1px solid var(--line)}
+#commPage.room-mode .cat-page-head h2{font-size:20px;color:var(--chat-ink);font-weight:600}
+#commPage.room-mode .comm-body{padding:20px 18px 24px}
+.room-heading{font-size:24px;font-weight:800;margin-bottom:4px}
+.room-subheading{font-size:16px;color:var(--muted);margin-bottom:18px}
+#commPage.room-mode .cf{padding:0;margin-bottom:14px}
+#commPage.room-mode .cf label{display:block;color:var(--chat-ink)!important;font-size:15px!important;margin-bottom:7px!important}
+#commPage.room-mode .cf input,#commPage.room-mode .cf textarea{width:100%;border:1px solid var(--green);border-radius:8px;padding:11px 12px;font-size:16px;color:var(--chat-ink);background:var(--chat-surface)}
+#commPage.room-mode .cf textarea{min-height:76px;resize:vertical}
+#commPage.room-mode .cf-meta:empty{display:none}
+#commPage.room-mode .cf-meta{min-height:0;margin-top:4px}
+#commPage.room-mode .cf-err:empty{display:none}
+#commPage.room-mode .cf-tabs{display:flex;flex-wrap:wrap;gap:8px}
+#commPage.room-mode .cf-tab{min-height:40px;border:1px solid var(--green);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;color:var(--chat-ink);background:var(--chat-surface)}
+#commPage.room-mode .cf-tab.on{background:var(--chat-selected);border-color:var(--chat-blue);color:var(--chat-blue)}
+#commPage.room-mode .cf-tab:focus-visible{outline:2px solid var(--chat-blue);outline-offset:2px}
+#commPage.room-mode .comm-foot{background:var(--chat-surface);padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px))}
+#commPage.room-mode .comm-next{display:block;margin-inline:auto;background:var(--chat-blue);color:var(--chat-on-action);border-radius:8px;min-height:48px;font-size:18px}
+#commPage.room-mode .cf.err input,#commPage.room-mode .cf.err textarea{border-color:var(--danger)}
 </style>
 <link rel="stylesheet" href="/property-details.css">
 </head>
@@ -2902,17 +2923,20 @@ var SPEC = {
   amenities:{label:'Amenities', icon:'✔', multi:true, opts:['Bed','Study Table','Chair','Wardrobe','Wi-Fi','RO Water','Power Backup']},
   washroom:{label:'Washroom', icon:'🚻', opts:['Available','Not Available']},
   parkingSpace:{label:'Parking Space', icon:'🅿️', opts:['Available','Not Available']},
-  tenant:{label:'Preferred Tenant / किसके लिए है', icon:'👪', opts:['Family Only','Bachelors Only','Only Girls','Only Boys','Boys & Girls Both']},
-  acType:{label:'Property Type / प्रकार', icon:'❄️', opts:['AC Room/Flat','Non-AC Room/Flat']},
-  water:{label:'Water Supply / पानी की सुविधा', icon:'💧', opts:['Government Supply / सरकारी नल','Ground Water (Borewell) / बोरिंग (जमीन का पानी)']}
+  tenant:{label:'Preferred Tenant', icon:'👪', opts:['Family Only','Bachelors Only','Only Girls','Only Boys','Boys & Girls Both']},
+  allowedFor:{label:'Allowed For', icon:'👥', opts:['Boys','Girls','Families','Anyone']},
+  washroomType:{label:'Washroom Type', icon:'🚻', opts:['Attached','Common']},
+  acType:{label:'Type of Property', icon:'❄️', opts:['AC Room','Non-AC Room']},
+  water:{label:'Water Supply', icon:'💧', opts:['Government Supply','Ground Water (Borewell)']}
 };
 var NUM_SPEC = { sizeSqft:{label:'Property Size (in Sq.Ft)', icon:'📐', unit:' sq.ft'}, roadWidthFt:{label:'Facing Road Width (in Feet)', icon:'🛣️', unit:' ft road'} };
 function specKeysFor(cat){
   var k = [];
   if(cat==='flat'||cat==='house') k.push('bhkType','furnish','parking');
   if(cat==='room'||cat==='hostel'||cat==='pg') k.push('sharing','amenities');
+  if(cat==='room') k.push('allowedFor','washroomType');
   if(cat==='office'||cat==='shop'||cat==='godown') k.push('sizeSqft','washroom','parkingSpace','roadWidthFt');
-  if(['room','flat','hostel','pg','house'].indexOf(cat)>=0) k.push('tenant');
+  if(['flat','hostel','pg','house'].indexOf(cat)>=0) k.push('tenant');
   if(['room','flat','hostel','pg'].indexOf(cat)>=0) k.push('acType');
   k.push('water');
   return k;
@@ -2946,6 +2970,7 @@ document.getElementById('pSpecs').addEventListener('input', function(e){
 });
 function catPostTarget(cat){
   closeCatPage();
+  if(cat === 'room'){ openCommPage('room'); return; }
   if(catPageFromForm){ selectPostCat(cat); return; }
   state.photos = []; state.photoFiles = []; renderPhotoRow(); resetPostForm(); selectPostCat(cat); openModal('postModal');
 }
@@ -3015,11 +3040,23 @@ var HOUSE_FIELDS = [
   {k:'adDesc', label:'Describe what you are selling *', area:true, max:4096, ph:'Include condition, features and reason for selling'}
 ];
 var COMM_FIELDS = COMM_FIELDS_COMM, commMode = 'comm';
+var ROOM_FIELDS = [
+  {k:'adTitle',label:'Title',text:true,req:true,max:70,ph:'e.g. Sunny 1BHK near Metro Station'},
+  {k:'acType',label:SPEC.acType.label,chips:SPEC.acType.opts,req:true},
+  {k:'water',label:SPEC.water.label,chips:SPEC.water.opts,req:true},
+  {k:'amenities',label:SPEC.amenities.label,chips:SPEC.amenities.opts,multi:true},
+  {k:'price',label:'Monthly Rent (₹)',num:true,req:true,ph:'e.g. 12000'},
+  {k:'sharing',label:SPEC.sharing.label,chips:SPEC.sharing.opts,req:true},
+  {k:'allowedFor',label:SPEC.allowedFor.label,chips:SPEC.allowedFor.opts,req:true},
+  {k:'washroomType',label:SPEC.washroomType.label,chips:SPEC.washroomType.opts,req:true},
+  {k:'adDesc',label:'Description',area:true,max:4096,ph:'Tell seekers about the place...'}
+];
 var comm = {};
 function escA(v){ return String(v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 function renderComm(){
-  document.getElementById('commBody').innerHTML = COMM_FIELDS.map(function(f){
+  document.getElementById('commBody').innerHTML = (commMode==='room'?'<h3 class="room-heading">Properties</h3><p class="room-subheading">For Rent: Room</p>':'') + COMM_FIELDS.map(function(f){
     var v = comm[f.k] || '', meta = '<div class="cf-meta"><span class="cf-err" data-err="'+f.k+'"></span>'+(f.max?'<span data-count="'+f.k+'">'+v.length+' / '+f.max+'</span>':'')+'</div>';
+    if(f.chips) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+(f.req?' <span class="req">*</span>':'')+'</label><div class="cf-tabs" role="'+(f.multi?'group':'radiogroup')+'" aria-label="'+f.label+'">'+f.chips.map(function(t){var selected=f.multi?(v||[]).indexOf(t)>=0:v===t;return '<button type="button" class="cf-tab'+(selected?' on':'')+'" role="'+(f.multi?'checkbox':'radio')+'" aria-checked="'+selected+'" data-tab="'+f.k+'" data-val="'+escA(t)+'">'+(f.multi?(selected?'☑ ':'☐ '):'')+escA(t)+'</button>';}).join('')+'</div>'+meta+'</div>';
     if(f.opts) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><button type="button" class="cf-line" data-pop="'+f.k+'">'+(v?'<span>'+escA(v)+'</span>':'<span class="ph">&nbsp;</span>')+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9.5l6 6 6-6" stroke="#5a5a5a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+meta+'</div>';
     if(f.tabs) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><div class="cf-tabs">'+f.tabs.map(function(t){ return '<button type="button" class="cf-tab'+(v===t?' on':'')+'" data-tab="'+f.k+'" data-val="'+escA(t)+'">'+escA(t)+'</button>'; }).join('')+'</div>'+meta+'</div>';
     if(f.area) return '<div class="cf" data-cf="'+f.k+'"><label>'+f.label+'</label><textarea data-in="'+f.k+'" maxlength="'+f.max+'" placeholder="'+escA(f.ph)+'">'+escA(v)+'</textarea>'+meta+'</div>';
@@ -3045,7 +3082,8 @@ function closeCommPop(){
   var d = document.getElementById('commDlg'); d.classList.remove('show');
   setTimeout(function(){ d.classList.remove('open'); }, 180); commPopKey = null;
 }
-function openCommPage(mode){ commMode = mode === 'house' ? 'house' : 'comm'; COMM_FIELDS = commMode === 'house' ? HOUSE_FIELDS : COMM_FIELDS_COMM;
+function openCommPage(mode){ commMode = mode === 'room' ? 'room' : mode === 'house' ? 'house' : 'comm'; COMM_FIELDS = commMode === 'room' ? ROOM_FIELDS : commMode === 'house' ? HOUSE_FIELDS : COMM_FIELDS_COMM;
+  document.getElementById('commPage').classList.toggle('room-mode',commMode==='room');
   document.getElementById('commDlgTitle').textContent = commMode === 'house' ? 'For Rent: Houses & Apartments' : 'For Rent: Shops & Offices';
   comm = commMode === 'house' ? {bachelors:'No'} : {}; renderComm(); document.getElementById('commPage').classList.add('open'); document.getElementById('commBody').scrollTop = 0; }
 function closeCommPage(){ document.getElementById('commPage').classList.remove('open'); }
@@ -3062,7 +3100,10 @@ document.getElementById('commDlg').addEventListener('click', function(e){
 var commBody = document.getElementById('commBody');
 commBody.addEventListener('click', function(e){
   var t = e.target.closest('[data-tab]');
-  if(t){ var tk = t.getAttribute('data-tab'); comm[tk] = t.getAttribute('data-val'); t.parentNode.querySelectorAll('.cf-tab').forEach(function(x){ x.classList.toggle('on', x === t); }); clearCommErr(tk); return; }
+  if(t){ var tk = t.getAttribute('data-tab'), tv = t.getAttribute('data-val'), tf = COMM_FIELDS.find(function(f){return f.k===tk;});
+    if(tf && tf.multi){ var values=comm[tk]||[], pos=values.indexOf(tv); if(pos>=0) values.splice(pos,1); else values.push(tv); comm[tk]=values; var selected=values.indexOf(tv)>=0; t.classList.toggle('on',selected); t.setAttribute('aria-checked',String(selected)); t.textContent=(selected?'☑ ':'☐ ')+tv; }
+    else {comm[tk]=tv;t.parentNode.querySelectorAll('.cf-tab').forEach(function(x){x.classList.toggle('on',x===t);x.setAttribute('aria-checked',String(x===t));});}
+    clearCommErr(tk); return; }
   var b = e.target.closest('[data-pop]'); if(!b) return;
   var k = b.getAttribute('data-pop'); clearCommErr(k); openCommPop(k);
 });
@@ -3076,6 +3117,12 @@ commBody.addEventListener('input', function(e){
 function validateComm(){
   var ok = true, first = null;
   function bad(k, msg){ ok = false; first = first || k; setCommErr(k, msg); }
+  if(commMode==='room'){
+    ROOM_FIELDS.forEach(function(f){if(f.req && !(String(comm[f.k]||'').trim())) bad(f.k,'Please complete this field.');});
+    if(!(Number(comm.price)>0)) bad('price','Enter a monthly rent greater than zero.');
+    if(first){var field=commBody.querySelector('[data-cf="'+first+'"]');if(field) field.scrollIntoView({block:'center'});}
+    return ok;
+  }
   COMM_FIELDS.forEach(function(f){ if(f.opts && f.req && !comm[f.k]) bad(f.k, ''); });
   var sa = comm.superArea, sn = Number(sa);
   if(!sa || !(sn >= 0) || sn > 99999999) bad('superArea', 'Super Builtup area sqft has a maximum value of 99999999');
@@ -3088,6 +3135,19 @@ function validateComm(){
 }
 document.getElementById('commNext').addEventListener('click', function(){
   if(!validateComm()) return;
+  if(commMode==='room'){
+    var roomData=Object.assign({},comm);
+    closeCommPage();
+    if(!catPageFromForm){state.photos=[];state.photoFiles=[];renderPhotoRow();resetPostForm();}
+    selectPostCat('room');
+    specKeysFor('room').forEach(function(key){state.specs[key]=roomData[key];});
+    renderSpecs();
+    document.getElementById('pTitle').value=roomData.adTitle.trim();
+    document.getElementById('pPrice').value=roomData.price;
+    document.getElementById('pDesc').value=roomData.adDesc||'';
+    openModal('postModal');
+    return;
+  }
   if(commMode === 'house'){
     var hcat = (comm.type === 'Flats / Apartments' || comm.type === 'Independent / Builder Floors') ? 'flat' : 'house';
     var hd = Object.assign({}, comm, {mode:'house'});
