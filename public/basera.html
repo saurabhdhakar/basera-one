@@ -930,6 +930,7 @@ img{height:auto;}
 #commPage.room-mode .cf.err input,#commPage.room-mode .cf.err textarea{border-color:var(--danger)}
 </style>
 <link rel="stylesheet" href="/property-details.css">
+<link rel="stylesheet" href="/property-posting.css">
 </head>
 <body>
 
@@ -1048,28 +1049,28 @@ img{height:auto;}
 
 <!-- POST AD MODAL -->
 <div class="modal-overlay" id="postModal">
-  <div class="sheet">
-    <div class="sheet-head"><h3 data-i18n="post_title">Post your Ad — it's free</h3><span class="sheet-close" data-close="postModal">✕</span></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="postingTitle">
+    <div class="sheet-head"><button type="button" class="sheet-close" data-close="postModal" aria-label="Back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12H4.5M10.5 5.5 4 12l6.5 6.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h3 id="postingTitle">Upload Property Photos</h3></div>
     <div class="sheet-body">
-      <div class="field"><label>Category / श्रेणी</label><div class="pcat-pick" id="pCatPick"><span id="pCatName"></span><button type="button" id="pCatChange">Change</button></div></div>
-      <div class="field"><label data-i18n="post_lbl_title">Title</label><input id="pTitle" data-i18n-ph="post_ph_title" placeholder="e.g. Sunny 1BHK near Metro Station"></div>
-      <div class="field"><label data-i18n="post_lbl_photos">Photos (owner uploaded)</label>
-        <div class="photo-row" id="photoRow"></div>
-        <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
-        <button type="button" class="upload-btn" id="uploadTrigger" style="border-radius:8px;">＋</button>
-        <p class="note" data-i18n="post_photo_note">Real photos get 3x more replies. Stored only on this device for this demo.</p>
+      <div class="posting-photo-top">
+        <button type="button" class="upload-btn" id="uploadTrigger"><span class="posting-camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h4l2-3h4l2 3h4v13H4z" stroke-linejoin="round"/><circle cx="12" cy="13" r="4"/></svg><span class="posting-plus">+</span></span><b>Add Main Cover Photo</b></button>
+        <div class="posting-cover" id="coverPreview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m3 17 5-5 4 4 4-6 5 7"/><circle cx="8" cy="8" r="1"/></svg></div>
       </div>
-      <div class="field"><label data-i18n="post_lbl_city">City</label>
-        <select id="pCity"></select>
-      </div>
-      <div class="field"><label data-i18n="post_lbl_locality">Locality / Area</label><div id="roomLocationField"></div><input id="pLocality" type="hidden"></div>
-      <div class="field"><label data-i18n="post_lbl_price">Monthly rent (₹)</label><input id="pPrice" type="number" data-i18n-ph="post_ph_price" placeholder="e.g. 12000"></div>
-      <div id="pSpecs"></div>
-      <div class="field"><label data-i18n="post_lbl_desc">Description</label><textarea id="pDesc" data-i18n-ph="post_ph_desc" placeholder="Tell seekers about the place..."></textarea></div>
-      <div class="field"><label data-i18n="post_lbl_phone">Your contact number</label><input id="pPhone" type="tel" data-i18n-ph="post_ph_phone" placeholder="10-digit mobile number"></div>
-      <button class="btn" id="submitAdBtn" data-i18n="post_submit">Post Ad — Free, No Subscription</button>
-      <p class="note" data-i18n="post_footnote">Basera never charges owners or seekers to list, browse or contact. The app is funded entirely by the ads you see in the feed.</p>
+      <div class="photo-row" id="photoRow"></div>
+      <input type="file" id="photoInput" accept="image/*" multiple hidden aria-label="Upload property photos">
+      <p class="posting-photo-status" id="photoStatus" role="status">0 / 5 photos</p>
+      <div class="field"><label for="pPrice">Set Price (₹)</label><div class="posting-price"><span aria-hidden="true">₹</span><input id="pPrice" type="number" min="1" inputmode="numeric" placeholder="Enter monthly rent"></div></div>
+      <div class="field"><label for="pTitle">Property Title</label><input id="pTitle" placeholder="e.g. Bright private room near the metro"></div>
+      <div class="field"><label for="pDesc">Detailed Description</label><textarea id="pDesc" placeholder="Describe your property, amenities and nearby places"></textarea></div>
+      <div class="field"><label><svg class="posting-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>Verify Location</label><div id="roomLocationField"></div><input id="pLocality" type="hidden"></div>
+      <div class="field"><label for="pPhone">Contact Number</label><input id="pPhone" type="tel" inputmode="tel" placeholder="10-digit mobile number"></div>
+      <details class="posting-extra"><summary>Property settings</summary>
+        <div class="field"><label>Category</label><div class="pcat-pick" id="pCatPick"><span id="pCatName"></span><button type="button" id="pCatChange">Change</button></div></div>
+        <div class="field"><label for="pCity">City</label><select id="pCity"></select></div>
+        <div id="pSpecs"></div>
+      </details>
     </div>
+    <div class="posting-footer"><button type="button" class="btn" id="submitAdBtn">Publish Ad Now</button></div>
   </div>
 </div>
 
@@ -1470,6 +1471,7 @@ img{height:auto;}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
 <script src="/property-details.js"></script>
+<script src="/property-photos.js"></script>
 <script>
 (function(){
 "use strict";
@@ -2136,8 +2138,11 @@ function compressImageToWebp(file){
     var canvas = document.createElement('canvas');
     canvas.width = cw; canvas.height = ch;
     var ctx = canvas.getContext('2d');
+    if(!ctx) throw new Error('Image processing unavailable');
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(img, 0, 0, cw, ch);
+    var watermarkColor = getComputedStyle(document.getElementById('postModal')).getPropertyValue('--posting-on-control').trim();
+    window.BaseraPropertyPhotos.drawWatermark(ctx, cw, ch, watermarkColor);
     if(img.close) img.close();
     return new Promise(function(res, rej){
       canvas.toBlob(function(blob){
@@ -3178,6 +3183,7 @@ function selectPostCat(cat){
   renderSpecs();
 }
 function resetPostForm(){
+  photoReadVersion++;
   state.roomLocation = null;
   document.dispatchEvent(new CustomEvent('basera-post-reset'));
   ['pTitle','pLocality','pPrice','pDesc','pPhone'].forEach(function(id){ document.getElementById(id).value=''; });
@@ -3228,36 +3234,46 @@ document.getElementById('pCity').addEventListener('change', function(){
   document.dispatchEvent(new CustomEvent('basera-post-reset'));
 });
 
-document.getElementById('uploadTrigger').addEventListener('click', function(){
-  document.getElementById('photoInput').click();
-});
+var photoReadVersion = 0;
+var photoReading = false;
+function choosePhotos(){ if(!photoReading && state.photos.length < 5) document.getElementById('photoInput').click(); }
+document.getElementById('uploadTrigger').addEventListener('click', choosePhotos);
 document.getElementById('photoInput').addEventListener('change', function(e){
-  var files = Array.prototype.slice.call(e.target.files).slice(0, 5 - state.photos.length);
-  files.forEach(function(file){
-    state.photoFiles.push(file); // real File — uploaded to Firebase Storage on submit
-    var reader = new FileReader();
-    reader.onload = function(ev){
-      state.photos.push(ev.target.result); // data URL — just for the in-form preview
-      renderPhotoRow();
-    };
-    reader.readAsDataURL(file);
-  });
-  e.target.value = '';
+  var input = e.target;
+  var files = Array.prototype.slice.call(input.files).filter(function(file){ return file.type.indexOf('image/') === 0; }).slice(0, 5 - state.photos.length);
+  input.value = '';
+  if(!files.length || photoReading) return;
+  photoReading = true;
+  var version = photoReadVersion;
+  renderPhotoRow();
+  window.BaseraPropertyPhotos.readFiles(files).then(function(entries){
+    if(version !== photoReadVersion) return;
+    entries.forEach(function(entry){ state.photoFiles.push(entry.file); state.photos.push(entry.preview); });
+  }).catch(function(){ showToast('Could not read photo. Please try another image.'); }).finally(function(){ photoReading = false; renderPhotoRow(); });
 });
+function photoPreview(p, i, cover){
+  return '<div class="'+(cover ? 'posting-cover' : 'photo-thumb')+'"><img src="'+p+'" alt="Property photo '+(i+1)+'"><span class="posting-watermark" aria-hidden="true">Basera</span>'+(cover ? '<span class="posting-cover-label">Main cover</span>' : '')+'<button type="button" class="rm" data-i="'+i+'" aria-label="Remove photo '+(i+1)+'">×</button></div>';
+}
 function renderPhotoRow(){
   var row = document.getElementById('photoRow');
-  row.innerHTML = state.photos.map(function(p, i){
-    return '<div class="photo-thumb"><img src="'+p+'"><span class="rm" data-i="'+i+'">✕</span></div>';
-  }).join('');
-  document.getElementById('uploadTrigger').style.display = state.photos.length >= 5 ? 'none' : 'flex';
+  var cover = document.getElementById('coverPreview');
+  cover.innerHTML = state.photos.length ? photoPreview(state.photos[0],0,true) : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m3 17 5-5 4 4 4-6 5 7"/></svg>';
+  row.innerHTML = [1,2,3,4].map(function(i){ return state.photos[i] ? photoPreview(state.photos[i],i,false) : '<button type="button" class="posting-photo-slot" aria-label="Add photo '+(i+1)+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>'; }).join('');
+  var trigger = document.getElementById('uploadTrigger');
+  trigger.disabled = photoReading || state.photos.length >= 5;
+  trigger.querySelector('b').textContent = state.photos.length ? 'Add More Photos' : 'Add Main Cover Photo';
+  document.getElementById('photoStatus').textContent = photoReading ? 'Reading photos…' : state.photos.length + ' / 5 photos';
 }
-document.getElementById('photoRow').addEventListener('click', function(e){
-  var rm = e.target.closest('.rm'); if(!rm) return;
+function removePhoto(e){
+  var rm = e.target.closest('.rm');
+  if(!rm){ if(e.target.closest('.posting-photo-slot')) choosePhotos(); return; }
+  if(photoReading) return;
   var i = parseInt(rm.getAttribute('data-i'),10);
-  state.photos.splice(i,1);
-  state.photoFiles.splice(i,1);
-  renderPhotoRow();
-});
+  state.photos.splice(i,1); state.photoFiles.splice(i,1); renderPhotoRow();
+}
+document.getElementById('photoRow').addEventListener('click', removePhoto);
+document.getElementById('coverPreview').addEventListener('click', removePhoto);
+renderPhotoRow();
 
 function showToast(msg){
   var t = document.getElementById('toast');
@@ -3266,6 +3282,7 @@ function showToast(msg){
 }
 
 document.getElementById('submitAdBtn').addEventListener('click', function(){
+  if(photoReading){ showToast('Please wait for photos to finish loading.'); return; }
   var title = document.getElementById('pTitle').value.trim();
   var city = document.getElementById('pCity').value;
   var locality = document.getElementById('pLocality').value.trim();
@@ -3275,7 +3292,7 @@ document.getElementById('submitAdBtn').addEventListener('click', function(){
   var desc = document.getElementById('pDesc').value.trim();
   var phone = document.getElementById('pPhone').value.trim();
 
-  if(!title || !locality || !price || !phone){
+  if(!title || !locality || !(price > 0) || !phone){
     showToast(t('toast_fill_required'));
     return;
   }

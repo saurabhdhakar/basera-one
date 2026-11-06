@@ -1,0 +1,72 @@
+#postModal {
+  --card: oklch(1 0 0);
+  --bg: oklch(0.975 0.002 250);
+  --text: oklch(0.22 0.012 240);
+  --muted: oklch(0.52 0.015 240);
+  --line: oklch(0.87 0.008 240);
+  --posting-placeholder: oklch(0.6 0.012 240);
+  --posting-watermark: oklch(1 0 0 / 32%);
+  --posting-photo-control: oklch(0.15 0 0 / 70%);
+  --posting-on-control: oklch(1 0 0);
+  align-items: stretch;
+  background: var(--card);
+}
+#postModal .sheet {
+  max-width: 680px;
+  height: 100dvh;
+  max-height: 100dvh;
+  border-radius: 0;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+#postModal .sheet-head {
+  position: static;
+  flex-shrink: 0;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) 16px 12px;
+  background: var(--card);
+  border-bottom: 0;
+}
+#postModal .sheet-head h3 { font-size: 20px; line-height: 1.35; font-weight: 800; }
+#postModal .sheet-close { display: grid; place-items: center; width: 36px; height: 40px; padding: 0; flex-shrink: 0; color: var(--text); }
+#postModal .sheet-body { flex: 1; min-height: 0; overflow-y: auto; padding: 10px 20px 20px; overscroll-behavior: contain; }
+#postModal .posting-photo-top { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+#postModal .upload-btn, #postModal .posting-cover { width: 100%; height: auto; aspect-ratio: 1; border-radius: 8px; margin: 0; }
+#postModal .upload-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 1.5px dashed var(--line); background: var(--bg); color: var(--text); padding: 12px; }
+#postModal .upload-btn:disabled { opacity: .5; cursor: default; }
+#postModal .upload-btn b { font-size: 13px; line-height: 1.45; font-weight: 700; }
+#postModal .posting-camera { position: relative; display: block; }
+#postModal .posting-camera svg { width: 38px; height: 38px; }
+#postModal .posting-plus { position: absolute; right: -7px; bottom: -3px; color: var(--chat-blue); font-size: 27px; font-weight: 700; background: var(--bg); line-height: 1; }
+#postModal .posting-cover { position: relative; overflow: hidden; background: var(--bg); border: 1px solid var(--line); display: grid; place-items: center; }
+#postModal .posting-cover > svg { width: 32px; height: 32px; color: var(--muted); }
+#postModal .posting-cover img, #postModal .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+#postModal .posting-watermark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transform: rotate(-28deg); color: var(--posting-watermark); font-family: 'Manrope', sans-serif; font-size: 35px; font-weight: 800; pointer-events: none; }
+#postModal .posting-cover-label { position: absolute; bottom: 8px; left: 8px; background: var(--posting-photo-control); color: var(--posting-on-control); padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+#postModal .photo-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 12px 0 0; }
+#postModal .photo-thumb, #postModal .posting-photo-slot { position: relative; width: 100%; height: auto; aspect-ratio: 1; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--card); }
+#postModal .posting-photo-slot { display: grid; place-items: center; color: var(--posting-placeholder); }
+#postModal .posting-photo-slot svg { width: 22px; height: 22px; }
+#postModal .photo-thumb .posting-watermark { font-size: 17px; }
+#postModal .rm { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--posting-photo-control); color: var(--posting-on-control); font-size: 16px; }
+#postModal .posting-photo-status { font-size: 12px; color: var(--muted); margin: 10px 0 22px; min-height: 18px; }
+#postModal .field { margin-bottom: 20px; }
+#postModal .field label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+#postModal .field input, #postModal .field textarea, #postModal .field select { border: 1px solid var(--line); border-radius: 8px; padding: 13px 14px; font-size: 15px; font-weight: 500; line-height: 1.5; background: var(--card); color: var(--text); }
+#postModal .field input::placeholder, #postModal .field textarea::placeholder { color: var(--posting-placeholder); font-weight: 400; }
+#postModal .field input:focus, #postModal .field textarea:focus, #postModal .field select:focus { border-color: var(--chat-blue); outline: 2px solid var(--chat-selected); }
+#postModal .field textarea { min-height: 118px; resize: vertical; }
+#postModal .posting-price { position: relative; }
+#postModal .posting-price > span { position: absolute; top: 50%; left: 14px; transform: translateY(-50%); font-size: 20px; font-weight: 700; }
+#postModal .posting-price input { padding-left: 38px; }
+#postModal .posting-pin { width: 19px; height: 19px; color: var(--marigold-dark); }
+#postModal .posting-extra { border-top: 1px solid var(--line); padding-top: 16px; }
+#postModal .posting-extra summary { font-weight: 700; font-size: 14px; cursor: pointer; margin-bottom: 16px; }
+#postModal .posting-footer { flex-shrink: 0; padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--card); }
+#postModal .posting-footer .btn { width: 100%; min-height: 52px; border-radius: 8px; font-size: 17px; font-weight: 800; color: var(--chat-on-action); background: var(--chat-blue); box-shadow: none; }
+#postModal button:focus-visible, #postModal summary:focus-visible { outline: 2px solid var(--chat-blue); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { #postModal, #postModal .sheet { transition: none; } }
