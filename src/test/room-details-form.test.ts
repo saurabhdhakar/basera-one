@@ -9,7 +9,9 @@ beforeEach(() => {
   dom = new JSDOM(html, { url: 'http://localhost/basera.html', runScripts: 'outside-only' });
   const start = html.indexOf('<script>', html.indexOf('firebase-storage-compat.js'));
   const end = html.indexOf('</script>', start);
-  const script = html.slice(start + 8, end).replace('initFirebase();', 'window.__roomTest={state:state,collectSpecs:collectSpecs};initFirebase();');
+  const source = html.slice(start + 8, end);
+  const call = source.lastIndexOf('initFirebase();');
+  const script = source.slice(0, call) + 'window.__roomTest={state:state,collectSpecs:collectSpecs};' + source.slice(call);
   dom.window.HTMLElement.prototype.scrollIntoView = () => {};
   dom.window.eval(script);
   hook = (dom.window as unknown as { __roomTest: typeof hook }).__roomTest;
@@ -35,17 +37,17 @@ function next() {
 }
 it.each(['Boys', 'Girls', 'Families', 'Anyone'])('carries Allowed For %s into the posting payload', value => {
   choose('allowedFor', value); choose('washroomType', 'Attached'); next();
-  expect(hook.collectSpecs().specs.allowedFor).toBe(value);
+  expect(hook.collectSpecs().specs['allowedFor']).toBe(value);
 });
 it.each(['Attached', 'Common'])('carries Washroom Type %s into the posting payload', value => {
   choose('allowedFor', 'Anyone'); choose('washroomType', value); next();
-  expect(hook.collectSpecs().specs.washroomType).toBe(value);
+  expect(hook.collectSpecs().specs['washroomType']).toBe(value);
 });
 it('Next retains entered room details and multiple amenities without submitting', () => {
   choose('allowedFor', 'Anyone'); choose('washroomType', 'Common');
   choose('amenities', 'Bed'); choose('amenities', 'Wi-Fi'); next();
-  expect(hook.collectSpecs().specs.amenities).toEqual(['Bed', 'Wi-Fi']);
-  expect(hook.collectSpecs().specs.acType).toBe('AC Room');
+  expect(hook.collectSpecs().specs['amenities']).toEqual(['Bed', 'Wi-Fi']);
+  expect(hook.collectSpecs().specs['acType']).toBe('AC Room');
   expect(dom.window.document.querySelector<HTMLInputElement>('#pPrice')?.value).toBe('12000');
   expect(dom.window.document.querySelector('#postModal')?.classList.contains('open')).toBe(true);
 });
