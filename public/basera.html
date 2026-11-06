@@ -919,12 +919,14 @@ img{height:auto;}
 #commPage.room-mode .cf input,#commPage.room-mode .cf textarea{width:100%;border:1px solid var(--green);border-radius:8px;padding:11px 12px;font-size:16px;color:var(--chat-ink);background:var(--chat-surface)}
 #commPage.room-mode .cf textarea{min-height:76px;resize:vertical}
 #commPage.room-mode .cf-meta:empty{display:none}
+#commPage.room-mode .cf-meta{min-height:0;margin-top:4px}
+#commPage.room-mode .cf-err:empty{display:none}
 #commPage.room-mode .cf-tabs{display:flex;flex-wrap:wrap;gap:8px}
 #commPage.room-mode .cf-tab{min-height:40px;border:1px solid var(--green);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;color:var(--chat-ink);background:var(--chat-surface)}
 #commPage.room-mode .cf-tab.on{background:var(--chat-selected);border-color:var(--chat-blue);color:var(--chat-blue)}
 #commPage.room-mode .cf-tab:focus-visible{outline:2px solid var(--chat-blue);outline-offset:2px}
 #commPage.room-mode .comm-foot{background:var(--chat-surface);padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px))}
-#commPage.room-mode .comm-next{background:var(--chat-blue);color:var(--chat-on-action);border-radius:8px;min-height:48px;font-size:18px}
+#commPage.room-mode .comm-next{display:block;margin-inline:auto;background:var(--chat-blue);color:var(--chat-on-action);border-radius:8px;min-height:48px;font-size:18px}
 #commPage.room-mode .cf.err input,#commPage.room-mode .cf.err textarea{border-color:var(--danger)}
 </style>
 <link rel="stylesheet" href="/property-details.css">
